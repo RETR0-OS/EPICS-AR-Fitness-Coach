@@ -25,7 +25,7 @@ Please note that none of this tech stack is set in stone. All of it is ever-evol
 - Further tech stack will be added after more research
 
 ### Database
-- MySQL (An  SQL-based relational DB thaty allows storage of data in the form of tables).
+- MySQL (An  SQL-based relational DB that allows storage of data in the form of tables).
 
 ### Computer Vision Model Inference Endpoint
 - Python
