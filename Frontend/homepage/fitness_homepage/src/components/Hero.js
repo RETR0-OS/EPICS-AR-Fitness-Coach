@@ -3,8 +3,8 @@ import React from 'react';
 function Hero() {
   return (
     <div className="hero">
-      <h2>Welcome to Fitness Tool</h2>
-      <p>Track your workouts with AI-powered tools.</p>
+      <h2>Welcome to AR Fitness Trainer</h2>
+      <p>Use our AR Fitness Trainer to track your form and improve your workouts.</p>
       <button>Get Started</button>
     </div>
   );
