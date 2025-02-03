@@ -43,4 +43,4 @@ Please note that none of this tech stack is set in stone. All of it is ever-evol
 
 ### AI
 - Please list all endpoints in a detailed markdown file, their returned  JSON object format, and a description of the return values. 
-- !!!**DO NOT PUSH ANY API TOKENS TO GITHUB**!!!! THIS IS VERY VERY VERY IMPORTANT. Please maintain a separate .env file for authentication tokens and add the file in the .gitignore. Removing any auth tokens from github commit history is a very big hassle and requires a repository rebase. This prevents us from rolling back to old commits in case anything breaks. Hence, please ensure before every push that there are no .env files stages in the commit.
+- !!!**DO NOT PUSH ANY API TOKENS TO GITHUB**!!!! THIS IS VERY VERY VERY IMPORTANT. Please maintain a separate .env file for authentication tokens and add the file in the .gitignore. Removing any auth tokens from github commit history is a very big hassle and requires a repository rebase. This prevents us from rolling back to old commits in case anything breaks. Hence, please ensure before every push that there are no .env files staged in the commit.
