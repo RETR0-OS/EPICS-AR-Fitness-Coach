@@ -4,8 +4,8 @@ from PIL import Image
 import numpy as np
 
 '''
-    This scripts opens the devices webcam an streams the footage.
-    The streamed footage is them passed through the YOLOv8 algorithm to detect the bounding box for the primary person in the image
+    This script opens the device's webcam and streams the footage.
+    The streamed footage is then passed through the YOLOv8 algorithm to detect the bounding box for the primary person in the image.
     The footage is then cropped to the bounding box containing the primary person.
     The cropped image will later be passed to ViTPose for Key-point detection.
 '''
