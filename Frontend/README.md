@@ -26,7 +26,7 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 
 To push your changes to github first create a branch,
 ```bash
-git checkout -b "branch name"
+git checkout -b branchname
 ```
 Then, add the Frontend directory
 ```bash
