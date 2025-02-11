@@ -47,22 +47,27 @@ while True:
             main_box = []
             main_person = max(person_boxes, key=get_box_area) #Gets the person with the largest bounding box, as this is most probably the main person
             coordinates = main_person.xyxy[0].cpu().numpy().astype(int) #Gets the coordinates for the bounding box for the person
-            main_box.append(coordinates)
+            main_box.append(coordinates) #Extracts coordinates of the bounding box for the main person
             rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) #Convert to RGB color format
             pil_image = Image.fromarray(rgb_image) #Convert to PIL Image for processing
-            # pil_image = pil_image.crop((coordinates[0], coordinates[1], coordinates[2], coordinates[3])).convert("RGB") #Crop the image to be closest to the focus person
-            # cv2_image = np.array(pil_image) #Convert back to CV2 image
-            # frame = cv2_image[:, :, ::-1].copy() #Convert to BGR format as this is the one used by openCV
 
             #frame now contains the cropped image of the main person.
-            main_box = np.array(main_box)
+            main_box = np.array(main_box) # Convert to numpy array
+
+            # Convert to (x, y, width, height) format for ViTPose
             main_box[:,2] = main_box[:,2] - main_box[:,0]
             main_box[:,3] = main_box[:,3] - main_box[:,1]
+
+            # Process image and bounding box for pose estimation
             inputs = image_processor(pil_image, boxes=[main_box], return_tensors="pt")
 
+            #get inferences from ViTPose
             with torch.no_grad():
                 outputs = model(**inputs)
+
+            # Post-process the results to get the keypoints
             pose_results = image_processor.post_process_pose_estimation(outputs, boxes=[main_box])
+
             image_pose_result = pose_results[0][0]["keypoints"]# Retrieves the keypoint coordinates for the main person in the image.
 
             #fixme: Add code to draw the keypoints on the image
