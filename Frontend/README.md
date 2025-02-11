@@ -30,7 +30,7 @@ git checkout -b "branch name"
 ```
 Then, add the Frontend directory
 ```bash
-git add .\Frontend\
+git add Frontend/
 ```
 Next, commit your changes
 ```bash
