@@ -13,4 +13,4 @@ This script opens the device's webcam and streams the footage. The streamed foot
 The pre-trained YOLOv8 weights by Ultralytics downloaded by the ultralytics library required to run inferences.
 
 ### pose_estimation.py
-Extends the YOLOv8 human detection script to include pose estimation using the ViTPose algorithm. The script resizes the input frame to match the ViTPose model's input size instead of cropping to save on computation on key-point calculation and then passes the frame to the ViTPose model to get the key points.
+Extends the YOLOv8 human detection script to include pose estimation using the ViTPose algorithm. The script resizes the input frame to match the ViTPose model's input size instead of cropping to save on computation on key-point calculation and then passes the frame to the ViTPose model to get the key points. The inferred keypoints are then drawn on the frame and the corresponding skeletion is generated. The frame is then displayed on the screen.
