@@ -12,6 +12,7 @@ import torch
     The cropped image will later be passed to ViTPose for Key-point detection.
 '''
 
+part_mapper = ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle"]
 
 def get_box_area(box):
     """
@@ -23,6 +24,66 @@ def get_box_area(box):
     width = coordinates[2] - coordinates[0]
     height = coordinates[3] - coordinates[1]
     return width * height
+
+def draw_keypoints(image, results):
+    """
+        This function draws the keypoints on the image.
+        :param image: The image to draw the keypoints on
+        :param keypoints: The keypoints to draw on the image
+        :return: The image with the keypoints drawn on it
+    """
+    keypoints = results["keypoints"]
+    scores = results["scores"]
+    available_keypoints = dict()
+    for i in range(len(scores)):
+        if scores[i] > 0.75:
+            available_keypoints[part_mapper[i]] = keypoints[i]
+            cv2.circle(image, (int(keypoints[i][0]), int(keypoints[i][1])), 5, (0, 255, 0), -1) #Draw point
+    #Make maps
+    keys = list(available_keypoints.keys())
+
+    #map nose
+    if "nose" in keys:
+        if "left_eye" in keys:
+            cv2.line(image, (int(available_keypoints["nose"][0]), int(available_keypoints["nose"][1])), (int(available_keypoints["left_eye"][0]), int(available_keypoints["left_eye"][1])), (0, 255, 0), 2)
+        if "right_eye" in keys:
+            cv2.line(image, (int(available_keypoints["nose"][0]), int(available_keypoints["nose"][1])), (int(available_keypoints["right_eye"][0]), int(available_keypoints["right_eye"][1])), (0, 255, 0), 2)
+        if "left_shoulder" in keys:
+            cv2.line(image, (int(available_keypoints["nose"][0]), int(available_keypoints["nose"][1])), (int(available_keypoints["left_shoulder"][0]), int(available_keypoints["left_shoulder"][1])), (0, 255, 0), 2)
+        if "right_shoulder" in keys:
+            cv2.line(image, (int(available_keypoints["nose"][0]), int(available_keypoints["nose"][1])), (int(available_keypoints["right_shoulder"][0]), int(available_keypoints["right_shoulder"][1])), (0, 255, 0), 2)
+    if "left_eye" in keys and "left_ear" in keys:
+        cv2.line(image, (int(available_keypoints["left_eye"][0]), int(available_keypoints["left_eye"][1])), (int(available_keypoints["left_ear"][0]), int(available_keypoints["left_ear"][1])), (0, 255, 0), 2)
+    if "right_eye" in keys and "right_ear" in keys:
+        cv2.line(image, (int(available_keypoints["right_eye"][0]), int(available_keypoints["right_eye"][1])), (int(available_keypoints["right_ear"][0]), int(available_keypoints["right_ear"][1])), (0, 255, 0), 2)
+    if "left_shoulder" in keys and "left_elbow" in keys:
+        if "left_elbow" in keys:
+            cv2.line(image, (int(available_keypoints["left_shoulder"][0]), int(available_keypoints["left_shoulder"][1])), (int(available_keypoints["left_elbow"][0]), int(available_keypoints["left_elbow"][1])), (0, 255, 0), 2)
+        if "right_shoulder" in keys:
+            cv2.line(image, (int(available_keypoints["left_shoulder"][0]), int(available_keypoints["left_shoulder"][1])), (int(available_keypoints["right_shoulder"][0]), int(available_keypoints["right_shoulder"][1])), (0, 255, 0), 2)
+        if "left_hip" in keys:
+            cv2.line(image, (int(available_keypoints["left_shoulder"][0]), int(available_keypoints["left_shoulder"][1])), (int(available_keypoints["left_hip"][0]), int(available_keypoints["left_hip"][1])), (0, 255, 0), 2)
+    if "right_shoulder" in keys:
+        if "right_elbow" in keys:
+            cv2.line(image, (int(available_keypoints["right_shoulder"][0]), int(available_keypoints["right_shoulder"][1])), (int(available_keypoints["right_elbow"][0]), int(available_keypoints["right_elbow"][1])), (0, 255, 0), 2)
+        if "right_hip" in keys:
+            cv2.line(image, (int(available_keypoints["right_shoulder"][0]), int(available_keypoints["right_shoulder"][1])), (int(available_keypoints["right_hip"][0]), int(available_keypoints["right_hip"][1])), (0, 255, 0), 2)
+    if "left_elbow" in keys and "left_wrist" in keys:
+        cv2.line(image, (int(available_keypoints["left_elbow"][0]), int(available_keypoints["left_elbow"][1])), (int(available_keypoints["left_wrist"][0]), int(available_keypoints["left_wrist"][1])), (0, 255, 0), 2)
+    if "right_elbow" in keys and "right_wrist" in keys:
+        cv2.line(image, (int(available_keypoints["right_elbow"][0]), int(available_keypoints["right_elbow"][1])), (int(available_keypoints["right_wrist"][0]), int(available_keypoints["right_wrist"][1])), (0, 255, 0), 2)
+    if "left_hip" in keys:
+        if "left_knee" in keys:
+            cv2.line(image, (int(available_keypoints["left_hip"][0]), int(available_keypoints["left_hip"][1])), (int(available_keypoints["left_knee"][0]), int(available_keypoints["left_knee"][1])), (0, 255, 0), 2)
+        if "right_hip" in keys:
+            cv2.line(image, (int(available_keypoints["left_hip"][0]), int(available_keypoints["left_hip"][1])), (int(available_keypoints["right_hip"][0]), int(available_keypoints["right_hip"][1])), (0, 255, 0), 2)
+    if "right_hip" in keys and "right_knee" in keys:
+        cv2.line(image, (int(available_keypoints["right_hip"][0]), int(available_keypoints["right_hip"][1])), (int(available_keypoints["right_knee"][0]), int(available_keypoints["right_knee"][1])), (0, 255, 0), 2)
+    if "left_knee" in keys and "left_ankle" in keys:
+        cv2.line(image, (int(available_keypoints["left_knee"][0]), int(available_keypoints["left_knee"][1])), (int(available_keypoints["left_ankle"][0]), int(available_keypoints["left_ankle"][1])), (0, 255, 0), 2)
+    if "right_knee" in keys and "right_ankle" in keys:
+        cv2.line(image, (int(available_keypoints["right_knee"][0]), int(available_keypoints["right_knee"][1])), (int(available_keypoints["right_ankle"][0]), int(available_keypoints["right_ankle"][1])), (0, 255, 0), 2)
+    return image
 
 yolo = YOLO('yolov8s.pt')
 # print(yolo.names)
@@ -71,9 +132,11 @@ while True:
             image_pose_result = pose_results[0][0]["keypoints"]# Retrieves the keypoint coordinates for the main person in the image.
 
             #fixme: Add code to draw the keypoints on the image
+            # print(pose_results)
+            frame = draw_keypoints(frame, pose_results[0][0])
 
             #fixme: Add code to upscale the image to the original size for display.
-
+            frame = cv2.resize(frame, (800, 700))
     cv2.imshow('frame', frame) #Display the re-rendered frame
 
     if cv2.waitKey(1) == ord('q'): #stop capturing if 'q' is clicked
