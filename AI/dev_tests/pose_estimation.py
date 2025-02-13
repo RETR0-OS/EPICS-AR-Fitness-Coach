@@ -25,24 +25,27 @@ def get_box_area(box):
     height = coordinates[3] - coordinates[1]
     return width * height
 
+
 def draw_keypoints(image, results):
     """
-        This function draws the keypoints on the image.
+        This function draws the keypoints on the image and draws the corresponding skeleton.
         :param image: The image to draw the keypoints on
         :param keypoints: The keypoints to draw on the image
         :return: The image with the keypoints drawn on it
     """
-    keypoints = results["keypoints"]
-    scores = results["scores"]
+    keypoints = results["keypoints"] #Get keypoint coordinates
+    scores = results["scores"]  #Get confidence scores for each keypoint
     available_keypoints = dict()
     for i in range(len(scores)):
         if scores[i] > 0.75:
-            available_keypoints[part_mapper[i]] = keypoints[i]
+            available_keypoints[part_mapper[i]] = keypoints[i] #Add keypoint to available keypoints.
             cv2.circle(image, (int(keypoints[i][0]), int(keypoints[i][1])), 5, (0, 255, 0), -1) #Draw point
-    #Make maps
+
+
     keys = list(available_keypoints.keys())
 
-    #map nose
+    #Draw skeleton
+    #fixme: See if this can be done in a more efficient way
     if "nose" in keys:
         if "left_eye" in keys:
             cv2.line(image, (int(available_keypoints["nose"][0]), int(available_keypoints["nose"][1])), (int(available_keypoints["left_eye"][0]), int(available_keypoints["left_eye"][1])), (0, 255, 0), 2)
@@ -84,6 +87,7 @@ def draw_keypoints(image, results):
     if "right_knee" in keys and "right_ankle" in keys:
         cv2.line(image, (int(available_keypoints["right_knee"][0]), int(available_keypoints["right_knee"][1])), (int(available_keypoints["right_ankle"][0]), int(available_keypoints["right_ankle"][1])), (0, 255, 0), 2)
     return image
+
 
 yolo = YOLO('yolov8s.pt')
 # print(yolo.names)
