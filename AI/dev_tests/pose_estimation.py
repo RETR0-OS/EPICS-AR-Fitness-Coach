@@ -30,8 +30,8 @@ def draw_keypoints(image, results):
     """
         This function draws the keypoints on the image and draws the corresponding skeleton.
         :param image: The image to draw the keypoints on
-        :param keypoints: The keypoints to draw on the image
-        :return: The image with the keypoints drawn on it
+        :param results: The inference results of ViTPose base model
+        :return: The image with the keypoints and skeleton drawn on it
     """
     keypoints = results["keypoints"] #Get keypoint coordinates
     scores = results["scores"]  #Get confidence scores for each keypoint
@@ -40,8 +40,6 @@ def draw_keypoints(image, results):
         if scores[i] > 0.75:
             available_keypoints[part_mapper[i]] = keypoints[i] #Add keypoint to available keypoints.
             cv2.circle(image, (int(keypoints[i][0]), int(keypoints[i][1])), 5, (0, 255, 0), -1) #Draw point
-
-
     keys = list(available_keypoints.keys())
 
     #Draw skeleton
