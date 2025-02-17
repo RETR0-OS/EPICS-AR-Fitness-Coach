@@ -7,11 +7,30 @@ export default {
   ],
   theme: {
     extend: {
+      maxWidth: {
+        '8xl': '1400px',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: '#000000',
+          hover: '#1a1a1a',
+        },
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms')
+  ],
 };

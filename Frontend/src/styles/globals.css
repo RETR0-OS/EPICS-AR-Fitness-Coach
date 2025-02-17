@@ -4,18 +4,54 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #000000;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-all duration-300;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 border-2 border-black text-black rounded-full hover:bg-gray-50 transition-all duration-300;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Modern form styles */
+.form-input {
+  @apply mt-1 block w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-full focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+/* Force dark mode */
+html {
+  color-scheme: dark;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
