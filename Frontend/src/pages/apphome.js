@@ -1,11 +1,16 @@
+import Navbar from "@/components/Navbar";
+import WebcamCapture from "@/components/WebcamCapture";
+
 // pages/app-home.js
 const AppHome = () => {
-    return (
-      <div>
-        <h1 className="text-3xl font-bold text-center mt-10">Welcome to the App Home Page</h1>
-        <p className="text-lg text-center mt-4">This is where your app's main functionality will go.</p>
+  return (
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <div className="pt-20"> {/* Add padding-top to account for fixed navbar */}
+        <WebcamCapture />
       </div>
-    );
-  };
-  
-  export default AppHome;
+    </div>
+  );
+};
+
+export default AppHome;
