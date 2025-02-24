@@ -1,4 +1,3 @@
-// pages/_app.js
 import { ThemeProvider } from 'next-themes';
 import '../styles/globals.css';
 
