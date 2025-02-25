@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { useAuth } from "../context/AuthContext";
 
 const LogIn = () => {
   const router = useRouter();
@@ -8,10 +9,30 @@ const LogIn = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
+    setError("");
+    setLoading(true);
+    
+    try {
+      const result = await login(email, password);
+      
+      if (result.success) {
+        // Redirect to home page or dashboard after successful login
+        router.push('/apphome');
+      } else {
+        setError(result.message || "Login failed. Please check your credentials.");
+      }
+    } catch (err) {
+      setError("An error occurred during login. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,6 +53,18 @@ const LogIn = () => {
       >
         <h2 className="text-3xl font-bold text-center">Welcome Back</h2>
         <p className="text-sm text-gray-400 text-center mt-2">Log in to access your account</p>
+
+        {error && (
+          <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-100 px-4 py-2 rounded mt-4">
+            {error}
+          </div>
+        )}
+
+        {success && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4">
+            {success}
+        </div>
+        )}
 
         <form className="mt-6" onSubmit={handleSubmit}>
           <div>
@@ -85,8 +118,9 @@ const LogIn = () => {
             whileTap={{ scale: 0.95 }}
             type="submit"
             className="btn-primary w-full mt-6"
-          >
-            Log In
+            disabled={loading}
+            >
+            {loading ? "Logging in..." : "Log In"}
           </motion.button>
         </form>
 

@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb://localhost:27017/ar-fitness",
+    "jwtSecret": "your_jwt_secret_key"
+  }

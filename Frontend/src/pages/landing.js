@@ -18,7 +18,7 @@ const LandingPage = () => {
               Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively.
             </p>
             <div className="flex gap-4 animate-slide-up" style={{ animationDelay: "0.4s" }}>
-              <Link href="/apphome">
+              <Link href="/login">
                 <button className="btn-primary">
                   Get Started
                 </button>
