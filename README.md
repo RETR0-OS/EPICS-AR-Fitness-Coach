@@ -30,7 +30,9 @@ Please note that none of this tech stack is set in stone. All of it is ever-evol
 ### Computer Vision Model Inference Endpoint
 - Python
 - Hugging Face (An online AI/ML model repository of open-source models)
-- Google ViTPose++ (An open source computer vision model for human pose estimation)
+- Google ViTPose-base (An open source computer vision model for human pose estimation)
+- OpenCV YOLOv8s (An open-source model used for object-detection tasks)
+- PyTorch (an open-source AI/ML framework used extensively in the field to build models, manipulate outputs in the form of tensors and more)
 - FastAPI  (A lightweight python-based framework used to build API endpoints)
 
 ## Instructions for Development
