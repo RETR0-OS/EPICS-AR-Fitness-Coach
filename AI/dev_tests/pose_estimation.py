@@ -10,6 +10,7 @@ import torch
     The streamed footage is then passed through the YOLOv8 algorithm to detect the bounding box for the primary person in the image.
     The footage is then cropped to the bounding box containing the primary person.
     The cropped image will later be passed to ViTPose for Key-point detection.
+    This script now uses GPU acceleration (if available) for the ViTPose model to provide more adaptive real-time inferences.
 """
 
 part_mapper = ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle"]
@@ -90,8 +91,12 @@ def draw_keypoints(image, results):
 yolo = YOLO('yolov8s.pt')
 # print(yolo.names)
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+print(f"Inferences running on device: {device} : {torch.cuda.get_device_name(device)}")
+
 image_processor = AutoProcessor.from_pretrained("usyd-community/vitpose-base-simple")
-model = VitPoseForPoseEstimation.from_pretrained("usyd-community/vitpose-base-simple", device_map="cpu")
+model = VitPoseForPoseEstimation.from_pretrained("usyd-community/vitpose-base-simple").to(device)
 
 
 vCapture = cv2.VideoCapture(0)
@@ -122,7 +127,7 @@ while True:
             main_box[:,3] = main_box[:,3] - main_box[:,1]
 
             # Process image and bounding box for pose estimation
-            inputs = image_processor(pil_image, boxes=[main_box], return_tensors="pt")
+            inputs = image_processor(pil_image, boxes=[main_box], return_tensors="pt").to(device) #Preprocess image for ViTPose and transfer to GPU
 
             #get inferences from ViTPose
             with torch.no_grad():
@@ -131,13 +136,10 @@ while True:
             # Post-process the results to get the keypoints
             pose_results = image_processor.post_process_pose_estimation(outputs, boxes=[main_box])
 
-            image_pose_result = pose_results[0][0]["keypoints"]# Retrieves the keypoint coordinates for the main person in the image.
+            pose_results = [{k: v.cpu().numpy() for k, v in result.items()} for result in pose_results[0]] #transfer results to CPU for processing and convert to numpy arrays
 
-            #fixme: Add code to draw the keypoints on the image
-            # print(pose_results)
-            frame = draw_keypoints(frame, pose_results[0][0])
+            frame = draw_keypoints(frame, pose_results[0]) #Draw keypoints on the image
 
-            #fixme: Add code to upscale the image to the original size for display.
             frame = cv2.resize(frame, (800, 700))
     cv2.imshow('frame', frame) #Display the re-rendered frame
 
