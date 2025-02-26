@@ -14,3 +14,6 @@ The pre-trained YOLOv8 weights by Ultralytics downloaded by the ultralytics libr
 
 ### pose_estimation.py
 Extends the YOLOv8 human detection script to include pose estimation using the ViTPose algorithm. The script resizes the input frame to match the ViTPose model's input size instead of cropping to save on computation on key-point calculation and then passes the frame to the ViTPose model to get the key points. The inferred keypoints are then drawn on the frame and the corresponding skeletion is generated. The frame is then displayed on the screen. The script uses GPU inference for the ViTPose model, if available in the environment. The device-agnostic code ensure that the script runs in both environments with a GPU and ones without, while providing maximum efficiency.
+
+## Dev_tests/flask_server Directory
+This directory contains the code for a Flask server that is used to serve the AI inference endpoint. The server receives the webcam stream from the client and generates the inferences on the frames of that stream. The server then sends the inferences back to the client for display.
