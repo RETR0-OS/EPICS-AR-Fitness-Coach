@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Video Streaming</title>
+    <style>
+        #videoElement {
+            display: none;
+        }
+        #displayCanvas {
+            border: 1px solid #ccc;
+            width: 800px;
+            height: 700px;
+        }
+    </style>
+</head>
+<body>
+    <video id="videoElement" autoplay playsinline></video>
+    <canvas id="displayCanvas"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <script>
+        const video = document.getElementById('videoElement');
+        const captureCanvas = document.createElement('canvas');
+        const captureCtx = captureCanvas.getContext('2d');
+        const displayCanvas = document.getElementById('displayCanvas');
+        const displayCtx = displayCanvas.getContext('2d');
+
+        // Set fixed dimensions for better performance
+        displayCanvas.width = 800;
+        displayCanvas.height = 700;
+        captureCanvas.width = 256;
+        captureCanvas.height = 192;
+
+        let processingFrame = false;
+
+        const socket = io('http://localhost:5000', {
+            transports: ['websocket']
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.on('processed_frame', (data) => {
+            processingFrame = false;
+            const image = new Image();
+            image.onload = () => {
+                displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+                displayCtx.drawImage(image, 0, 0);
+            };
+            image.src = data;
+        });
+
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 256 },
+                height: { ideal: 192 },
+                frameRate: { ideal: 30 }
+            }
+        })
+        .then((stream) => {
+            video.srcObject = stream;
+        })
+        .catch((error) => {
+            console.error('Error accessing webcam:', error);
+        });
+
+        function captureAndSendFrame() {
+            if (!processingFrame && video.readyState === video.HAVE_ENOUGH_DATA) {
+                processingFrame = true;
+                captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+                const frame = captureCanvas.toDataURL('image/jpeg', 0.5);
+
+                if (socket.connected) {
+                    socket.emit('frame', frame);
+                }
+            }
+            requestAnimationFrame(captureAndSendFrame);
+        }
+
+        video.onloadedmetadata = () => {
+            requestAnimationFrame(captureAndSendFrame);
+        };
+    </script>
+</body>
+</html>
