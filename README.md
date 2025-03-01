@@ -42,6 +42,7 @@ Please note that none of this tech stack is set in stone. All of it is ever-evol
 ### Backend
 - Please list all API endpoints in a markdown file and the function they perform for the front end team to refer to. With every endpoint, list the JSON object format being returned so that the front end team can build mock data for testing accrodingly.
 - Please maintain a separate markdown file for the database implementation. List the tables created, their purpose, and the schema used for the front end to refer to.
+- !!!DO NOT PUSH ANY API TOKENS TO GITHUB!!!! THIS IS VERY VERY VERY IMPORTANT. Please maintain a separate .env file for authentication tokens and add the file in the .gitignore. Removing any auth tokens from github commit history is a very big hassle and requires a repository rebase. This prevents us from rolling back to old commits in case anything breaks. Hence, please ensure before every push that there are no .env files staged in the commit.
 
 ### AI
 - Please list all endpoints in a detailed markdown file, their returned  JSON object format, and a description of the return values. 
