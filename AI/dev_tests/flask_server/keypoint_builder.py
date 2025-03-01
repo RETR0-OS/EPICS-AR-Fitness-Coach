@@ -8,12 +8,36 @@ import torch
 
 class KeypointFinder:
     def __init__(self):
-        self.yolo = YOLO("../yolov8n.pt")
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"Inferences running on device: {self.device} : {torch.cuda.get_device_name(self.device)}")
-        self.image_processor = AutoProcessor.from_pretrained("usyd-community/vitpose-base-simple")
-        self.model = VitPoseForPoseEstimation.from_pretrained("usyd-community/vitpose-base-simple").to(self.device)
-        self.part_mapper = ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle"]
+        """
+            This class is used to find the main person in the frame and draw the keypoints on the person.
+            The class uses the YOLOv8 algorithm to detect the bounding box for the main person in the frame.
+            The detected bounding box is then passed to the ViTPose model to detect the keypoints for the person.
+            The keypoints are then drawn on the person in the frame.
+        """
+        self.yolo = YOLO("../yolov8n.pt") #Load the YOLOv8 model (now using the "n" version for higher speed)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #Check if GPU is available
+        # print(f"Inferences running on device: {self.device} : {torch.cuda.get_device_name(self.device)}") (optional to ensure that inferences are running on the correct device)
+        self.image_processor = AutoProcessor.from_pretrained("usyd-community/vitpose-base-simple") #Load the VitPose-base image preprocessor
+        self.model = VitPoseForPoseEstimation.from_pretrained("usyd-community/vitpose-base-simple").to(self.device) #Load the VitPose-base model
+        self.part_mapper = [
+            "nose",
+            "left_eye",
+            "right_eye",
+            "left_ear",
+            "right_ear",
+            "left_shoulder",
+            "right_shoulder",
+            "left_elbow",
+            "right_elbow",
+            "left_wrist",
+            "right_wrist",
+            "left_hip",
+            "right_hip",
+            "left_knee",
+            "right_knee",
+            "left_ankle",
+            "right_ankle"
+        ] #Map the keypoint indices to the corresponding body parts
 
     @staticmethod
     def get_box_area(box):
@@ -28,6 +52,12 @@ class KeypointFinder:
         return width * height
 
     def get_keypoints(self, image, main_box):
+        """
+        This function gets the keypoints for the main person in the frame.
+        :param image: the PIL image to get the keypoints for
+        :param main_box: The bounding box coordinates for the main person in the frame
+        :return: An array of 17 keypoint coordinates for the main person in the frame
+        """
         inputs = self.image_processor(image, boxes=[main_box], return_tensors="pt").to(self.device)
         with torch.no_grad():
             outputs = self.model(**inputs)
@@ -134,36 +164,37 @@ class KeypointFinder:
         return image
 
     def find_main_person(self, frame):
-        frame = cv2.resize(frame, (256, 192))
-        results = self.yolo(frame, verbose=False)
+        """
+        The driver function for the KeypointFinder class. This function detects the main person in the frame and draws the keypoints on the person.
+        :param frame: the CV2 frame to process.
+        :return: the processed image with the keypoints drawn on the main person.
+        """
+        frame = cv2.resize(frame, (256, 192)) #Resize frame for the VitPose model
+        results = self.yolo(frame, verbose=False) #Get the bounding boxes for the objects in the frame
         for result in results:
-            person_boxes = [x for x in result.boxes if bool(x.cls == 0) and bool(
-                float(x.conf) > 0.7)]  # Get all people detected in the image with high confidence
+            person_boxes = [x for x in result.boxes if bool(x.cls == 0) and bool(float(x.conf) > 0.7)]  # Get all people detected in the image with high confidence
             if person_boxes:
                 main_box = []
-                main_person = max(person_boxes,
-                                  key=self.get_box_area)  # Gets the person with the largest bounding box, as this is most probably the main person
-                coordinates = main_person.xyxy[0].cpu().numpy().astype(
-                    int)  # Gets the coordinates for the bounding box for the person
+                main_person = max(person_boxes, key=self.get_box_area)  # Gets the person with the largest bounding box, as this is most probably the main person
+                coordinates = main_person.xyxy[0].cpu().numpy().astype(int)  # Gets the coordinates for the bounding box for the person
                 main_box.append(coordinates)  # Extracts coordinates of the bounding box for the main person
                 rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB color format
                 pil_image = Image.fromarray(rgb_image)  # Convert to PIL Image for processing
-                main_box = np.array(main_box)
+                main_box = np.array(main_box) # Convert to numpy array for processing
 
                 # Convert to (x, y, width, height) format for ViTPose
                 main_box[:, 2] = main_box[:, 2] - main_box[:, 0]
                 main_box[:, 3] = main_box[:, 3] - main_box[:, 1]
 
-                outputs = self.get_keypoints(pil_image, main_box)
+                outputs = self.get_keypoints(pil_image, main_box) #Get the keypoint coordinates for the main person in the frame
 
-                boxes_tensor = torch.from_numpy(main_box).to("cpu", dtype=torch.float32)
+                boxes_tensor = torch.from_numpy(main_box).to("cpu", dtype=torch.float32) #Convert the bounding box to a tensor and move to CPU for processing
 
-                pose_results = self.image_processor.post_process_pose_estimation(outputs, boxes=[boxes_tensor])
+                pose_results = self.image_processor.post_process_pose_estimation(outputs, boxes=[boxes_tensor]) #Post process the pose estimation results on CPU
 
+                pose_results = [{k: v.cpu().numpy() for k, v in result.items()} for result in pose_results[0]] #Transfer results to CPU for processing and convert to numpy arrays
 
-                pose_results = [{k: v.cpu().numpy() for k, v in result.items()} for result in pose_results[0]]
+                frame = self.draw_keypoints(frame, pose_results[0]) #Get the image with the skeleton drawn on the main person
 
-                frame = self.draw_keypoints(frame, pose_results[0])
-
-        frame = cv2.resize(frame, (800, 700))
+        frame = cv2.resize(frame, (800, 700)) #Resize the frame for display
         return frame
