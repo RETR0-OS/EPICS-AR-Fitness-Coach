@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom base styles */
+@layer base {
+  body {
+    @apply bg-white dark:bg-gray-900;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  /* Add any custom component styles here */
+}
+
+/* Custom utility styles */
+@layer utilities {
+  /* Add any custom utility classes here */
+}
+
 :root {
   --background: #ffffff;
   --foreground: #000000;
