@@ -5,6 +5,7 @@ import SplitText from '../components/react-bits/SplitText';
 import ScrollFloat from '@/components/react-bits/ScrollFloat';
 import Particles from '../components/react-bits/Particles';
 import Orb from '../components/react-bits/Orb';
+import GradientText from '@/components/react-bits/GradientText';
 
 const LandingPage = () => {
   return (
@@ -28,46 +29,16 @@ const LandingPage = () => {
 
       <main className="relative z-10">
         {/* Hero Section with blur effect */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
-          <div className="text-left max-w-3xl backdrop-blur-sm bg-white/30 p-8 rounded-lg">
-            <h1 className="text-7xl font-bold text-black mb-8 leading-tight">
-              <SplitText 
-                text="Transform Your Fitness Journey" 
-                textAlign="left"
-              />
-            </h1>
-            <div className="text-2xl text-gray-600 mb-12">
-              <SplitText 
-                text="Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively."
-                textAlign="left"
-                delay={10}
-              />
-            </div>
-            <div className="flex gap-4" id="hero-buttons">
-              <Link href="/apphome">
-                <button className="btn-primary">
-                  Get Started
-                </button>
-              </Link>
-              <Link href="#features">
-                <button className="btn-secondary">
-                  Learn More
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll Indicator with blur effect */}
-        <div className="relative flex flex-col items-center mb-12" style={{ height: '200px' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 relative">
+          {/* Add orb behind the content */}
           <div style={{ 
             position: 'absolute',
-            left: '50%',
-            top: '40%', // Changed from 10% to 50% to center vertically
-            transform: 'translate(-50%, -50%)',
-            width: '500px', // Increased size from 300px
-            height: '500px', // Increased size from 300px
-            zIndex: 1,
+            right: '1%',
+            top: '52%',
+            transform: 'translate(0, -50%)',
+            width: '520px',
+            height: '520px',
+            zIndex: 0,
             pointerEvents: 'auto'
           }}>
             <Orb 
@@ -76,9 +47,48 @@ const LandingPage = () => {
               hoverIntensity={0.6}
             />
           </div>
-          <div className="flex flex-col items-center" style={{ zIndex: 2, pointerEvents: 'none', position: 'relative', top: '30px' }}>
-            <span className="text-lg font-medium text-gray-600 mb-2 px-4 py-2 rounded-lg" style={{ pointerEvents: 'auto' }}>
-              {/* Removed backdrop-blur-sm bg-white/30 classes */}
+          
+          <div className="flex flex-col relative">
+            <div className="flex justify-between items-center">
+              <div className="text-left max-w-2xl backdrop-blur-sm bg-white/30 p-8 rounded-lg z-10 relative">
+                <h1 className="text-7xl font-bold text-black mb-8 leading-tight">
+                  <SplitText 
+                    text="Transform Your Fitness Journey" 
+                    textAlign="left"
+                  />
+                </h1>
+                <div className="text-2xl text-gray-600 mb-12">
+                  <SplitText 
+                    text="Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Position button with absolute positioning */}
+            <div className="absolute right-40 top-40 z-10" id="hero-buttons">
+              <Link href="/apphome">
+                <div className="cursor-pointer">
+                  <GradientText 
+                    className="px-2 py-5 text-2xl font-semibold bg-white/70 backdrop-blur-sm"
+                    colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+                    animationSpeed={10}
+                    showBorder={false}
+                  >
+                    Get Started
+                  </GradientText>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll indicator arrow with blur effect */}
+        <div className="relative flex flex-col items-center mb-12">
+          <div className="flex flex-col items-center" style={{ zIndex: 2 }}>
+            <span className="text-lg font-medium text-gray-600 mb-2 px-4 py-2 rounded-lg backdrop-blur-sm bg-white/30">
               Scroll to learn more
             </span>
             <svg 
@@ -87,7 +97,6 @@ const LandingPage = () => {
               fill="none" 
               viewBox="0 0 24 24" 
               stroke="currentColor"
-              style={{ pointerEvents: 'auto' }}
             >
               <path 
                 strokeLinecap="round" 
@@ -149,25 +158,47 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* How It Works Section */}
-        <div className="py-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-5xl font-bold text-black mb-24 backdrop-blur-sm bg-white/30 p-4 rounded-lg inline-block">
+        {/* How It Works Section - Inverted colors with fade effect and white particles */}
+        <div className="relative py-48">
+          {/* Gradient fade effect at the top */}
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-transparent to-black z-0"></div>
+          
+          {/* Dark background */}
+          <div className="absolute inset-0 bg-black z-0"></div>
+          
+          {/* White particles overlay */}
+          <div className="absolute inset-0 z-1 pointer-events-none">
+            <Particles
+              className="w-full h-full"
+              particleColors={['#FFFFFF', '#F8F8F8']} // White particles
+              particleCount={1500}
+              particleSpread={5}
+              speed={0.03}
+              particleBaseSize={80}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={true}
+            />
+          </div>
+          
+          {/* Content - move it up more */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-32">
+            <h2 className="text-5xl font-bold text-white mb-20 backdrop-blur-sm bg-black/30 p-4 rounded-lg inline-block">
               <ScrollFloat>How It Works</ScrollFloat>
             </h2>
             <div className="grid md:grid-cols-3 gap-16">
               {[1, 2, 3].map((step, index) => (
-                <div key={step} className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
-                  <div className="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center mb-8">
-                    <span className="text-2xl font-bold text-black">{step}</span>
+                <div key={step} className="backdrop-blur-sm bg-black/40 p-6 rounded-lg border border-gray-600">
+                  <div className="w-16 h-16 border-2 border-white rounded-full flex items-center justify-center mb-8">
+                    <span className="text-2xl font-bold text-white">{step}</span>
                   </div>
-                  <h3 className="text-2xl font-semibold text-black mb-4">
+                  <h3 className="text-2xl font-semibold text-white mb-4">
                     <SplitText 
                       text={step === 1 ? "Click Get Started" : step === 2 ? "Set Up Your Space" : "Start Training"}
                       textAlign="left"
                     />
                   </h3>
-                  <div className="text-xl text-gray-600">
+                  <div className="text-xl text-gray-200">
                     <SplitText
                       text={
                         step === 1 
@@ -184,10 +215,13 @@ const LandingPage = () => {
               ))}
             </div>
           </div>
+          
+          {/* Make sure the gradient has a clearly defined height and is visible over the black background */}
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent z-0"></div>
         </div>
 
-        {/* FAQ Section */}
-        <div className="py-32">
+        {/* FAQ Section - add a little margin to better position after gradient */}
+        <div className="py-32 mt-4 bg-transparent relative z-10">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-5xl font-bold text-black mb-24 text-center backdrop-blur-sm bg-white/30 p-4 rounded-lg">
               <ScrollFloat>FAQ</ScrollFloat>
@@ -224,30 +258,32 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* Footer - Make fully opaque to hide particles behind it */}
-        <footer className="py-16 border-t border-gray-200 bg-white">
+        {/* Gradient transition to dark gray for footer */}
+        <div className="h-10 bg-gradient-to-b from-transparent to-gray-800"></div>
+
+        {/* Footer - Dark gray background with white text */}
+        <footer className="py-16 border-t border-gray-700 bg-gray-950">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-16">
               <div>
-                <h3 className="text-2xl font-bold text-black mb-8">AR Fitness</h3>
-                <p className="text-xl text-gray-600 mb-8 max-w-md">
+                <h3 className="text-2xl font-bold text-white mb-8">AR Fitness</h3>
+                <p className="text-xl text-gray-300 mb-8 max-w-md">
                   Transform your fitness journey with cutting-edge AR technology
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-16">
                 <div>
-                  <h4 className="text-lg font-semibold text-black mb-6">Links</h4>
+                  <h4 className="text-lg font-semibold text-white mb-6">Links</h4>
                   <ul className="space-y-4">
-                    <li><Link href="/" className="text-lg text-gray-600 hover:text-black transition-colors duration-200">Home</Link></li>
-                    <li><Link href="#features" className="text-lg text-gray-600 hover:text-black transition-colors duration-200">Features</Link></li>
-                    <li><Link href="#faq" className="text-lg text-gray-600 hover:text-black transition-colors duration-200">FAQ</Link></li>
+                    <li><Link href="#features" className="text-lg text-gray-300 hover:text-white transition-colors duration-200">Features</Link></li>
+                    <li><Link href="#faq" className="text-lg text-gray-300 hover:text-white transition-colors duration-200">FAQ</Link></li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-black mb-6">Legal</h4>
+                  <h4 className="text-lg font-semibold text-white mb-6">Legal</h4>
                   <ul className="space-y-4">
-                    <li><Link href="/privacy" className="text-lg text-gray-600 hover:text-black transition-colors duration-200">Privacy</Link></li>
-                    <li><Link href="/terms" className="text-lg text-gray-600 hover:text-black transition-colors duration-200">Terms</Link></li>
+                    <li><Link href="/privacy" className="text-lg text-gray-300 hover:text-white transition-colors duration-200">Privacy</Link></li>
+                    <li><Link href="/terms" className="text-lg text-gray-300 hover:text-white transition-colors duration-200">Terms</Link></li>
                   </ul>
                 </div>
               </div>
