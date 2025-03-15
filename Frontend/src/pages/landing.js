@@ -146,9 +146,9 @@ const LandingPage = () => {
             <Particles
               className="w-full h-full"
               particleColors={['#FFFFFF', '#F8F8F8']} // White particles
-              particleCount={1500}
+              particleCount={300}
               particleSpread={5}
-              speed={0.03}
+              speed={0.13}
               particleBaseSize={80}
               moveParticlesOnHover={false}
               alphaParticles={true}
