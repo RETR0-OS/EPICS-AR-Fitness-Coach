@@ -1,84 +1,138 @@
 // pages/landing.js
 import Navbar from '../components/Navbar';
 import Link from 'next/link';
-import { ArrowRightIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import SplitText from '../components/react-bits/SplitText';
+import ScrollFloat from '@/components/react-bits/ScrollFloat';
+import ScrollReveal from '@/components/react-bits/ScrollReveal';
 
 const LandingPage = () => {
   return (
     <div className="bg-white">
       <Navbar />
       <main>
-        {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
-          <div className="text-left max-w-3xl">
-            <h1 className="text-7xl font-bold text-black mb-8 leading-tight animate-slide-up">
-              Transform Your Fitness Journey
-            </h1>
-            <p className="text-2xl text-gray-600 mb-12 animate-slide-up" style={{ animationDelay: "0.2s" }}>
-              Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively.
-            </p>
-            <div className="flex gap-4 animate-slide-up" style={{ animationDelay: "0.4s" }}>
-              <Link href="/apphome">
-                <button className="btn-primary">
-                  Get Started
-                </button>
-              </Link>
-              <Link href="#features">
-                <button className="btn-secondary">
-                  Learn More
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Features Section */}
-        <div id="features" className="py-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-5xl font-bold text-black mb-24">Revolutionary Features</h2>
-            <div className="grid md:grid-cols-3 gap-16">
-              <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-                <h3 className="text-2xl font-semibold text-black mb-4">Real-time Form Correction</h3>
-                <p className="text-xl text-gray-600">
-                  Our AI technology uses your webcam to analyze movements and provide instant feedback, ensuring safe and effective workouts.
-                </p>
+        /* Hero Section */
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
+            <div className="text-left max-w-3xl">
+              <h1 className="text-7xl font-bold text-black mb-8 leading-tight">
+                <SplitText 
+            text="Transform Your Fitness Journey" 
+            textAlign="left"
+                />
+              </h1>
+              <div className="text-2xl text-gray-600 mb-12">
+                <SplitText 
+            text="Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively."
+            textAlign="left"
+                />
               </div>
-              <div className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
-                <h3 className="text-2xl font-semibold text-black mb-4">Personalized Workouts</h3>
-                <p className="text-xl text-gray-600">
-                  Web-based training programs that adapt to your progress and fitness goals in real-time.
-                </p>
-              </div>
-              <div className="animate-slide-up" style={{ animationDelay: "0.6s" }}>
-                <h3 className="text-2xl font-semibold text-black mb-4">Accessible Anywhere</h3>
-                <p className="text-xl text-gray-600">
-                  Train from any computer with a webcam. Mobile app coming soon for even more flexibility.
-                </p>
+              <div className="flex gap-4" id="hero-buttons">
+                <Link href="/apphome">
+            <button className="btn-primary">
+              Get Started
+            </button>
+                </Link>
+                <Link href="#features">
+            <button className="btn-secondary">
+              Learn More
+            </button>
+                </Link>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* How It Works Section */}
+          {/* Scroll Indicator */}
+          <div className="flex flex-col items-center mb-12">
+            <span className="text-lg font-medium text-gray-600 mb-2">Scroll to learn more</span>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-6 w-6 animate-bounce text-gray-600" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+              />
+            </svg>
+          </div>
+
+          {/* Features Section */}
+          <div id="features" className="py-48">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-5xl font-bold text-black mb-24">
+                <ScrollFloat>Revolutionary Features</ScrollFloat>
+              </h2>
+              <div className="grid md:grid-cols-3 gap-16">
+                <div>
+            <h3 className="text-2xl font-semibold text-black mb-4">
+              <SplitText text="Real-time Form Correction" textAlign="left" />
+            </h3>
+            <div className="text-xl text-gray-600">
+              <SplitText 
+                text="Our AI technology uses your webcam to analyze movements and provide instant feedback, ensuring safe and effective workouts."
+                textAlign="left"
+              />
+            </div>
+                </div>
+                <div>
+            <h3 className="text-2xl font-semibold text-black mb-4">
+              <SplitText text="Personalized Workouts" textAlign="left" />
+            </h3>
+            <div className="text-xl text-gray-600">
+              <SplitText 
+                text="Web-based training programs that adapt to your progress and fitness goals in real-time."
+                textAlign="left"
+              />
+            </div>
+                </div>
+                <div>
+            <h3 className="text-2xl font-semibold text-black mb-4">
+              <SplitText text="Accessible Anywhere" textAlign="left" />
+            </h3>
+            <div className="text-xl text-gray-600">
+              <SplitText 
+                text="Train from any computer with a webcam. Mobile app coming soon for even more flexibility."
+                textAlign="left"
+              />
+            </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How It Works Section */}
         <div className="py-32 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-5xl font-bold text-black mb-24">How It Works</h2>
+            <h2 className="text-5xl font-bold text-black mb-24">
+              <ScrollFloat>How It Works</ScrollFloat>
+            </h2>
             <div className="grid md:grid-cols-3 gap-16">
               {[1, 2, 3].map((step, index) => (
-                <div key={step} className="animate-slide-up" style={{ animationDelay: `${0.2 * index}s` }}>
+                <div key={step}>
                   <div className="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center mb-8">
                     <span className="text-2xl font-bold text-black">{step}</span>
                   </div>
                   <h3 className="text-2xl font-semibold text-black mb-4">
-                    {step === 1 ? "Click Get Started" : step === 2 ? "Set Up Your Space" : "Start Training"}
+                    <SplitText 
+                      text={step === 1 ? "Click Get Started" : step === 2 ? "Set Up Your Space" : "Start Training"}
+                      textAlign="left"
+                    />
                   </h3>
-                  <p className="text-xl text-gray-600">
-                    {step === 1 
-                      ? "Access our web application through your browser and click the Get Started button"
-                      : step === 2 
-                      ? "Clear space around you and ensure your whole body is visible in your webcam"
-                      : "Begin your AR-powered workouts with real-time form tracking and guidance"}
-                  </p>
+                  <div className="text-xl text-gray-600">
+                    <SplitText
+                      text={
+                        step === 1 
+                          ? "Access our web application through your browser and click the Get Started button"
+                          : step === 2 
+                          ? "Clear space around you and ensure your whole body is visible in your webcam"
+                          : "Begin your AR-powered workouts with real-time form tracking and guidance"
+                      }
+                      textAlign="left"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -88,7 +142,9 @@ const LandingPage = () => {
         {/* FAQ Section */}
         <div className="py-32">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-5xl font-bold text-black mb-24 text-center">FAQ</h2>
+            <h2 className="text-5xl font-bold text-black mb-24 text-center">
+              <ScrollFloat>FAQ</ScrollFloat>
+            </h2>
             <div className="space-y-12">
               {[
                 {
@@ -108,9 +164,13 @@ const LandingPage = () => {
                   answer: "Our AI technology uses your webcam to analyze your movements in real-time, comparing them to correct form patterns. This helps prevent injuries and ensures you're getting the most out of each exercise."
                 }
               ].map((faq, index) => (
-                <div key={index} className="animate-slide-up" style={{ animationDelay: `${0.2 * index}s` }}>
-                  <h3 className="text-2xl font-semibold mb-4 text-black">{faq.question}</h3>
-                  <p className="text-xl text-gray-600">{faq.answer}</p>
+                <div key={index}>
+                  <h3 className="text-2xl font-semibold mb-4 text-black">
+                    <SplitText text={faq.question} textAlign="left" />
+                  </h3>
+                  <div className="text-xl text-gray-600">
+                    <SplitText text={faq.answer} textAlign="left" />
+                  </div>
                 </div>
               ))}
             </div>
