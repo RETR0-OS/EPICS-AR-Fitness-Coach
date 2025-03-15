@@ -6,15 +6,27 @@ import ScrollFloat from '@/components/react-bits/ScrollFloat';
 import Particles from '../components/react-bits/Particles';
 import Orb from '../components/react-bits/Orb';
 import GradientText from '@/components/react-bits/GradientText';
+import { useState, useEffect } from 'react';
 
 const LandingPage = () => {
+  const [visible, setVisible] = useState(false);
+  
+  // Set visible to true after component mounts to trigger animations
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(true);
+    }, 600); // Delay the animation to allow the page to load
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   return (
     <div className="relative min-h-screen">
-      {/* Change from fixed to absolute positioning so it scrolls with content */}
+      {/* Background particles */}
       <div className="absolute inset-0 w-full h-full" style={{ zIndex: -20 }}>
         <Particles
           className="w-full h-full" 
-          particleColors={['#ADD8E6', '#ADD8E6']} //Light pastel blue
+          particleColors={['#ADD8E6', '#ADD8E6']}
           particleCount={2000}
           particleSpread={5}
           speed={0.05}
@@ -30,7 +42,7 @@ const LandingPage = () => {
       <main className="relative z-10">
         {/* Hero Section with blur effect */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 relative">
-          {/* Add orb behind the content */}
+          {/* Add orb behind the content with fade-in effect */}
           <div style={{ 
             position: 'absolute',
             right: '1%',
@@ -39,7 +51,9 @@ const LandingPage = () => {
             width: '520px',
             height: '520px',
             zIndex: 0,
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 1.2s ease-in-out',
           }}>
             <Orb 
               forceHoverState={false}
@@ -67,8 +81,16 @@ const LandingPage = () => {
               </div>
             </div>
             
-            {/* Position button with absolute positioning */}
-            <div className="absolute right-40 top-40 z-10" id="hero-buttons">
+            {/* Position button with absolute positioning and fade-in animation */}
+            <div 
+              className="absolute right-40 top-40 z-10" 
+              id="hero-buttons"
+              style={{
+                opacity: visible ? 1 : 0,
+                transform: `translateY(${visible ? 0 : '20px'})`, 
+                transition: 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out',
+              }}
+            >
               <Link href="/apphome">
                 <div className="cursor-pointer">
                   <GradientText 
@@ -107,56 +129,9 @@ const LandingPage = () => {
             </svg>
           </div>
         </div>
-
-        {/* Features Section */}
-        <div id="features" className="py-48">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-5xl font-bold text-black mb-24 backdrop-blur-sm bg-white/30 p-4 rounded-lg inline-block">
-              <ScrollFloat>Revolutionary Features</ScrollFloat>
-            </h2>
-            <div className="grid md:grid-cols-3 gap-16">
-              <div className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
-                <h3 className="text-2xl font-semibold text-black mb-4">
-                  <SplitText 
-                    text="Real-time Form Correction" 
-                    textAlign="left" 
-                  />
-                </h3>
-                <div className="text-xl text-gray-600">
-                  <SplitText 
-                    text="Our AI technology uses your webcam to analyze movements and provide instant feedback, ensuring safe and effective workouts."
-                    textAlign="left"
-                    delay={10}
-                  />
-                </div>
-              </div>
-              <div className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
-                <h3 className="text-2xl font-semibold text-black mb-4">
-                  <SplitText text="Personalized Workouts" textAlign="left" />
-                </h3>
-                <div className="text-xl text-gray-600">
-                  <SplitText 
-                    text="Web-based training programs that adapt to your progress and fitness goals in real-time."
-                    textAlign="left"
-                    delay={10}
-                  />
-                </div>
-              </div>
-              <div className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
-                <h3 className="text-2xl font-semibold text-black mb-4">
-                  <SplitText text="Accessible Anywhere" textAlign="left" />
-                </h3>
-                <div className="text-xl text-gray-600">
-                  <SplitText 
-                    text="Train from any computer with a webcam. Mobile app coming soon for even more flexibility."
-                    textAlign="left"
-                    delay={10}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
+        {/* Added increased white margin space before How It Works section */}
+        <div className="py-24"></div>
 
         {/* How It Works Section - Inverted colors with fade effect and white particles */}
         <div className="relative py-48">
@@ -218,6 +193,56 @@ const LandingPage = () => {
           
           {/* Make sure the gradient has a clearly defined height and is visible over the black background */}
           <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent z-0"></div>
+        </div>
+
+        {/* Features Section - moved after How It Works */}
+        <div id="features" className="py-48">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-5xl font-bold text-black mb-24 backdrop-blur-sm bg-white/30 p-4 rounded-lg inline-block">
+              <ScrollFloat>Revolutionary Features</ScrollFloat>
+            </h2>
+            <div className="grid md:grid-cols-3 gap-16">
+              <div className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
+                <h3 className="text-2xl font-semibold text-black mb-4">
+                  <SplitText 
+                    text="Real-time Form Correction" 
+                    textAlign="left" 
+                  />
+                </h3>
+                <div className="text-xl text-gray-600">
+                  <SplitText 
+                    text="Our AI technology uses your webcam to analyze movements and provide instant feedback, ensuring safe and effective workouts."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
+              </div>
+              <div className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
+                <h3 className="text-2xl font-semibold text-black mb-4">
+                  <SplitText text="Personalized Workouts" textAlign="left" />
+                </h3>
+                <div className="text-xl text-gray-600">
+                  <SplitText 
+                    text="Web-based training programs that adapt to your progress and fitness goals in real-time."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
+              </div>
+              <div className="backdrop-blur-sm bg-white/30 p-6 rounded-lg">
+                <h3 className="text-2xl font-semibold text-black mb-4">
+                  <SplitText text="Accessible Anywhere" textAlign="left" />
+                </h3>
+                <div className="text-xl text-gray-600">
+                  <SplitText 
+                    text="Train from any computer with a webcam. Mobile app coming soon for even more flexibility."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* FAQ Section - add a little margin to better position after gradient */}

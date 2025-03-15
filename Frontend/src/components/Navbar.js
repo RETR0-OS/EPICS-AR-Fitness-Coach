@@ -9,10 +9,12 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Toggle button - fixed in top left corner */}
+      {/* Toggle button - position changes when menu is open */}
       <button 
         onClick={() => setIsOpen(!isOpen)} 
-        className="fixed top-4 left-4 z-30 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-all duration-200 focus:outline-none"
+        className={`fixed top-4 z-30 p-2 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-all duration-300 focus:outline-none ${
+          isOpen ? 'left-[calc(16rem+0.5rem)]' : 'left-4'
+        }`}
         aria-label="Toggle menu"
       >
         {isOpen ? (
@@ -77,10 +79,10 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Overlay that appears behind the sidebar when it's open */}
+      {/* Modified overlay that dims the page without affecting contrast */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-10"
+          className="fixed inset-0 bg-black/10 z-10"
           onClick={() => setIsOpen(false)}
         />
       )}
