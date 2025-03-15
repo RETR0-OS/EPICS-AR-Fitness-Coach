@@ -8,7 +8,7 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <nav className="fixed w-full z-10 top-0 bg-white/90 backdrop-blur-md">
+    <nav className="fixed w-full z-20 top-0 bg-white/90 backdrop-blur-sm">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">

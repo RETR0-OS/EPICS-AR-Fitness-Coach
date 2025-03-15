@@ -3,108 +3,131 @@ import Navbar from '../components/Navbar';
 import Link from 'next/link';
 import SplitText from '../components/react-bits/SplitText';
 import ScrollFloat from '@/components/react-bits/ScrollFloat';
-import ScrollReveal from '@/components/react-bits/ScrollReveal';
+import Particles from '../components/react-bits/Particles';
 
 const LandingPage = () => {
   return (
-    <div className="bg-white">
+    <div className="relative min-h-screen">
+      {/* Change from fixed to absolute positioning so it scrolls with content */}
+      <div className="absolute inset-0 w-full h-full -z-10">
+        <Particles
+          className="w-full h-full" 
+          particleColors={['#000000', '#000000']}
+          particleCount={2000}
+          particleSpread={10}
+          speed={0.1}
+          particleBaseSize={150}
+          moveParticlesOnHover={false}
+          alphaParticles={true}
+          disableRotation={false}
+        />
+      </div>
+      
       <Navbar />
-      <main>
-        /* Hero Section */
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
-            <div className="text-left max-w-3xl">
-              <h1 className="text-7xl font-bold text-black mb-8 leading-tight">
-                <SplitText 
-            text="Transform Your Fitness Journey" 
-            textAlign="left"
-                />
-              </h1>
-              <div className="text-2xl text-gray-600 mb-12">
-                <SplitText 
-            text="Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively."
-            textAlign="left"
-                />
+
+      <main className="relative z-10">
+        {/* Hero Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
+          <div className="text-left max-w-3xl">
+            <h1 className="text-7xl font-bold text-black mb-8 leading-tight">
+              <SplitText 
+                text="Transform Your Fitness Journey" 
+                textAlign="left"
+              />
+            </h1>
+            <div className="text-2xl text-gray-600 mb-12">
+              <SplitText 
+                text="Experience personalized workouts with real-time form correction using your webcam. Train smarter, safer, and more effectively."
+                textAlign="left"
+                delay={10}
+              />
+            </div>
+            <div className="flex gap-4" id="hero-buttons">
+              <Link href="/apphome">
+                <button className="btn-primary">
+                  Get Started
+                </button>
+              </Link>
+              <Link href="#features">
+                <button className="btn-secondary">
+                  Learn More
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="flex flex-col items-center mb-12">
+          <span className="text-lg font-medium text-gray-600 mb-2">Scroll to learn more</span>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            className="h-6 w-6 animate-bounce text-gray-600" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+            />
+          </svg>
+        </div>
+
+        {/* Features Section */}
+        <div id="features" className="py-48">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-5xl font-bold text-black mb-24">
+              <ScrollFloat>Revolutionary Features</ScrollFloat>
+            </h2>
+            <div className="grid md:grid-cols-3 gap-16">
+              <div>
+                <h3 className="text-2xl font-semibold text-black mb-4">
+                  <SplitText 
+                    text="Real-time Form Correction" 
+                    textAlign="left" 
+                  />
+                </h3>
+                <div className="text-xl text-gray-600">
+                  <SplitText 
+                    text="Our AI technology uses your webcam to analyze movements and provide instant feedback, ensuring safe and effective workouts."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
               </div>
-              <div className="flex gap-4" id="hero-buttons">
-                <Link href="/apphome">
-            <button className="btn-primary">
-              Get Started
-            </button>
-                </Link>
-                <Link href="#features">
-            <button className="btn-secondary">
-              Learn More
-            </button>
-                </Link>
+              <div>
+                <h3 className="text-2xl font-semibold text-black mb-4">
+                  <SplitText text="Personalized Workouts" textAlign="left" />
+                </h3>
+                <div className="text-xl text-gray-600">
+                  <SplitText 
+                    text="Web-based training programs that adapt to your progress and fitness goals in real-time."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold text-black mb-4">
+                  <SplitText text="Accessible Anywhere" textAlign="left" />
+                </h3>
+                <div className="text-xl text-gray-600">
+                  <SplitText 
+                    text="Train from any computer with a webcam. Mobile app coming soon for even more flexibility."
+                    textAlign="left"
+                    delay={10}
+                  />
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Scroll Indicator */}
-          <div className="flex flex-col items-center mb-12">
-            <span className="text-lg font-medium text-gray-600 mb-2">Scroll to learn more</span>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 animate-bounce text-gray-600" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M19 14l-7 7m0 0l-7-7m7 7V3" 
-              />
-            </svg>
-          </div>
-
-          {/* Features Section */}
-          <div id="features" className="py-48">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-5xl font-bold text-black mb-24">
-                <ScrollFloat>Revolutionary Features</ScrollFloat>
-              </h2>
-              <div className="grid md:grid-cols-3 gap-16">
-                <div>
-            <h3 className="text-2xl font-semibold text-black mb-4">
-              <SplitText text="Real-time Form Correction" textAlign="left" />
-            </h3>
-            <div className="text-xl text-gray-600">
-              <SplitText 
-                text="Our AI technology uses your webcam to analyze movements and provide instant feedback, ensuring safe and effective workouts."
-                textAlign="left"
-              />
-            </div>
-                </div>
-                <div>
-            <h3 className="text-2xl font-semibold text-black mb-4">
-              <SplitText text="Personalized Workouts" textAlign="left" />
-            </h3>
-            <div className="text-xl text-gray-600">
-              <SplitText 
-                text="Web-based training programs that adapt to your progress and fitness goals in real-time."
-                textAlign="left"
-              />
-            </div>
-                </div>
-                <div>
-            <h3 className="text-2xl font-semibold text-black mb-4">
-              <SplitText text="Accessible Anywhere" textAlign="left" />
-            </h3>
-            <div className="text-xl text-gray-600">
-              <SplitText 
-                text="Train from any computer with a webcam. Mobile app coming soon for even more flexibility."
-                textAlign="left"
-              />
-            </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* How It Works Section */}
-        <div className="py-32 bg-gray-50">
+        {/* How It Works Section - Remove blur effect but keep visual distinction */}
+        <div className="py-32 bg-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-5xl font-bold text-black mb-24">
               <ScrollFloat>How It Works</ScrollFloat>
@@ -131,6 +154,7 @@ const LandingPage = () => {
                           : "Begin your AR-powered workouts with real-time form tracking and guidance"
                       }
                       textAlign="left"
+                      delay={10}
                     />
                   </div>
                 </div>
@@ -166,10 +190,10 @@ const LandingPage = () => {
               ].map((faq, index) => (
                 <div key={index}>
                   <h3 className="text-2xl font-semibold mb-4 text-black">
-                    <SplitText text={faq.question} textAlign="left" />
+                    <SplitText text={faq.question} textAlign="left" delay={10}/>
                   </h3>
                   <div className="text-xl text-gray-600">
-                    <SplitText text={faq.answer} textAlign="left" />
+                    <SplitText text={faq.answer} textAlign="left" delay={10}/>
                   </div>
                 </div>
               ))}
@@ -177,8 +201,8 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="py-16 border-t border-gray-200">
+        {/* Footer - Remove blur effect for consistency */}
+        <footer className="py-16 border-t border-gray-200 bg-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-16">
               <div>

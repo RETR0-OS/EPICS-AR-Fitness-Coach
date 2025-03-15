@@ -13,7 +13,8 @@ const ScrollFloat = ({
   ease = "back.inOut(2)",
   scrollStart = "center bottom+=50%",
   scrollEnd = "bottom bottom-=40%",
-  stagger = 0.03
+  stagger = 0.03,
+  tag = "div" // Set default tag to div instead of hardcoding h2
 }) => {
   const containerRef = useRef(null);
 
@@ -73,8 +74,11 @@ const ScrollFloat = ({
     stagger
   ]);
 
+  // Dynamically create the element based on the tag prop
+  const TagName = tag;
+  
   return (
-    <h2
+    <TagName
       ref={containerRef}
       className={`my-5 overflow-hidden ${containerClassName}`}
     >
@@ -83,7 +87,7 @@ const ScrollFloat = ({
       >
         {splitText}
       </span>
-    </h2>
+    </TagName>
   );
 };
 
