@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/router";
 import Navbar from "../components/Navbar";
 
 const SignupPage = () => {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,79 +34,74 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-white flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col">
       <Navbar />
-      
-      {/* Back Button Positioned Below Navbar */}
-      <div className="w-full px-6 mt-6 pt-14">
-        <button
-          onClick={() => router.push("/")}
-          className="btn-secondary"
-        >
-          ← Back
-        </button>
-      </div>
-
-      <main className="flex flex-col items-center justify-center w-full flex-1">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8 border border-gray-200 animate-slide-up"
-        >
-          <h2 className="text-3xl font-bold text-black text-center">
-            Create Your Account
-          </h2>
-          <p className="text-gray-500 text-center mt-2">
-            Sign up to get started
-          </p>
-
-          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-            {/* Input Fields with Placeholders */}
-            {[
-              { id: "firstName", placeholder: "Enter first name" },
-              { id: "lastName", placeholder: "Enter last name" },
-              { id: "email", placeholder: "Enter email" },
-              { id: "password", placeholder: "Enter password" },
-              { id: "confirmPassword", placeholder: "Re-enter password" },
-            ].map(({ id, placeholder }) => (
-              <div key={id} className="flex flex-col">
-                <label htmlFor={id} className="form-label capitalize">
-                  {id.replace(/([A-Z])/g, " $1")}
-                </label>
-                <input
-                  type={id.includes("password") ? "password" : "text"}
-                  id={id}
-                  value={formData[id]}
-                  onChange={handleChange}
-                  placeholder={placeholder}
-                  className="form-input"
-                  required
-                />
-              </div>
-            ))}
-
-            {/* Sign Up Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="submit"
-              className="btn-primary w-full mt-4"
+      <main className="flex-grow flex items-center justify-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+          <div className="text-center max-w-2xl mx-auto">
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-6xl font-bold text-black mb-8 leading-tight"
             >
-              Sign Up
-            </motion.button>
-          </form>
-
-          {/* Redirect to Login */}
-          <p className="mt-6 text-sm text-center text-gray-500">
-            Already have an account?{" "}
-            <a href="/login" className="text-black font-medium hover:underline">
-              Log in here
-            </a>
-          </p>
-        </motion.div>
+              Create Your Account
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-xl text-gray-600 mb-12"
+            >
+              Sign up to get started with personalized workouts and real-time form correction.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+              <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+                {[
+                  { id: "firstName", placeholder: "Enter first name" },
+                  { id: "lastName", placeholder: "Enter last name" },
+                  { id: "email", placeholder: "Enter email" },
+                  { id: "password", placeholder: "Enter password" },
+                  { id: "confirmPassword", placeholder: "Re-enter password" },
+                ].map(({ id, placeholder }) => (
+                  <div key={id} className="flex flex-col">
+                <label htmlFor={id} className="text-left capitalize block text-lg font-semibold text-black mb-2">
+                {id.replace(/([A-Z])/g, " $1")}
+                    </label>
+                    <input
+                      type={id.includes("password") ? "password" : "text"}
+                      id={id}
+                      value={formData[id]}
+                      onChange={handleChange}
+                      placeholder={placeholder}
+                      className="form-input"
+                      required
+                    />
+                  </div>
+                ))}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="submit"
+                  className="btn-primary w-full mt-4"
+                >
+                  Sign Up
+                </motion.button>
+              </form>
+              <p className="mt-6 text-sm text-center text-gray-500">
+                Already have an account?{" "}
+                <a href="/login" className="text-black font-medium hover:underline">
+                  Log in here
+                </a>
+              </p>
+            </motion.div>
+          </div>
+        </div>
       </main>
     </div>
   );

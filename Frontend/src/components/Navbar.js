@@ -22,14 +22,14 @@ const Navbar = () => {
               <Link href="/" className="text-gray-600 hover:text-black transition-colors duration-200">
                 Home
               </Link>
-              <Link href="/login" className="text-gray-600 hover:text-black transition-colors duration-200">
-                Login
-              </Link>
               <Link href="/signup" className="text-gray-600 hover:text-black transition-colors duration-200">
                 Sign Up
               </Link>
               <Link href="/profile" className="text-gray-600 hover:text-black transition-colors duration-200">
                 Profile
+              </Link>
+              <Link href="/login" className="text-gray-600 hover:text-black transition-colors duration-200">
+                Login
               </Link>
               <Link href="/apphome">
                 <button className="px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-200">
