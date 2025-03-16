@@ -32,6 +32,9 @@
         captureCanvas.height = 192;
 
         let processingFrame = false;
+        let frameCount = 0;
+        let lastFpsUpdate = Date.now();
+        let currentFps = 0;
 
         const socket = io('http://localhost:5000', {
             transports: ['websocket']
@@ -42,11 +45,27 @@
         });
 
         socket.on('processed_frame', (data) => {
+            frameCount++;
+            const now = Date.now();
+            const delta = now - lastFpsUpdate;
+            if (delta >= 1000) {
+                currentFps = frameCount;
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+
             processingFrame = false;
             const image = new Image();
             image.onload = () => {
                 displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
                 displayCtx.drawImage(image, 0, 0);
+
+                // Draw FPS display
+                displayCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                displayCtx.fillRect(5, 5, 100, 30);
+                displayCtx.fillStyle = 'white';
+                displayCtx.font = '20px Arial';
+                displayCtx.fillText(`FPS: ${currentFps}`, 10, 30);
             };
             image.src = data;
         });
