@@ -8,17 +8,6 @@ video_files = os.listdir(directory)
 output_dir = input("Enter absolute path of the output directory>> ")
 frame_rate = int(input("Enter extraction frame rate>> "))
 
-def get_box_area(box):
-    """
-        This function returns the area of the bounding box bounding an object.
-        :param box: The bounding box for the object in the frame
-        :return: float representing the area of the bounding box
-    """
-    coordinates = box.xyxy[0].cpu().numpy().astype(int)
-    width = coordinates[2] - coordinates[0]
-    height = coordinates[3] - coordinates[1]
-    return width * height
-
 for x in video_files:
     video_capture = cv2.VideoCapture(os.path.join(directory, x))
     if not video_capture.isOpened():
