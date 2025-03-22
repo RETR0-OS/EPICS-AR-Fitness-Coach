@@ -63,7 +63,7 @@ for x in video_files:
                 "image_id": dev_id,
                 "category_id": 1,
                 "keypoints": [],
-                "bbox": main_box.tolist()
+                "bbox": main_box.tolist()[0]
             })
             dev_id += 1
 print(f"Extracted {len(os.listdir(output_dir))} frames")
