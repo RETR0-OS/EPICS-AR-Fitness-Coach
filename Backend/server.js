@@ -1,20 +1,34 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const sequelize = require('./config/database');
+const initDatabase = require('./config/initDatabase');
+const authRoutes = require('./routes/api/auth');
 
 const app = express();
 
-// Init Middleware
-app.use(express.json({ extended: false }));
+// Middleware
 app.use(cors());
+app.use(express.json());
 
-// Define Routes
-app.use('/api/auth', require('./routes/api/auth'));
+// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/profile', require('./routes/api/profile'));
 
 // Basic route for testing
 app.get('/', (req, res) => res.send('API Running'));
 
-const PORT = process.env.PORT || 5001;
-
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+// Test database connection and sync models
+sequelize.authenticate()
+  .then(() => {
+    console.log('Database connected...');
+    return sequelize.sync();
+  })
+  .then(() => {
+    console.log('Database synced...');
+    const PORT = process.env.PORT || 5001;
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+  })
+  .catch(err => {
+    console.error('Error connecting to the database:', err);
+  });
