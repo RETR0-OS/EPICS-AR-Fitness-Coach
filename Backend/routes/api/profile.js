@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../../middleware/auth');
+const auth = require('./auth');
 const User = require('../../models/User'); // Import the User model
 
 // @route    GET api/profile

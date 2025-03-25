@@ -3,22 +3,93 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
-const auth = require('../../middleware/auth');
+const User = require('../../models/User');
+const AuthToken = require('../../models/AuthToken');
 require('dotenv').config();
 
-// In-memory user storage
-const users = [];
+// @route    POST api/auth/signup
+// @desc     Register user
+// @access   Public
+router.post(
+  '/signup',
+  [
+    check('firstName', 'First name is required').not().isEmpty(),
+    check('lastName', 'Last name is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
+    check('password', 'Password must contain at least 1 symbol, 1 uppercase & 1 lowercase letter')
+      .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
+  ],
+  async (req, res) => {
+    console.log('Request body:', req.body); // Terminal comment
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log("Error");
+      return res.status(400).json({ status: 'Error', message: errors.array() });
+    }
 
-// @route    GET api/auth
-// @desc     Get user by token
-// @access   Private
-router.get('/', auth, (req, res) => {
-  const user = users.find(user => user.id === req.user.id);
-  if (!user) {
-    return res.status(404).json({ status: 'Error', message: 'User not found' });
+    const { firstName, lastName, email, password } = req.body;
+
+    try {
+      let user = await User.findOne({ where: { email } });
+
+      if (user) {
+        return res.status(400).json({ status: 'Error', message: 'User already exists' });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const password_hash = await bcrypt.hash(password, salt);
+
+      console.log({firstName, lastName, email, password_hash}); // Terminal comment
+
+
+      // Save the user information to the database
+      user = await User.create({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password_hash: password_hash,
+        createdAt: new Date(),
+      });
+
+      if (!user) {
+        return res.status(500).json({ status: 'Error', message: 'Failed to create user' });
+      }
+
+      const payload = {
+        user: {
+          id: user.user_id
+        }
+      };
+
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      const expires_at = new Date();
+      expires_at.setHours(expires_at.getHours() + 1);
+
+      // Save the token information to the database
+      await AuthToken.create({
+        user_id: user.user_id,
+        auth_token: token,
+        expires_at
+      });
+
+      console.error('User registered successfully:', user); // Terminal comment
+      res.json({ 
+        status: 'OK', 
+        message: 'User registered successfully 1234',
+        token 
+      });
+    } catch (err) {
+      console.error('Server error:', err.message);
+      res.status(500).json({ status: 'Error', message: 'Server error' });
+    }
   }
-  res.json(user);
-});
+);
 
 // @route    POST api/auth/login
 // @desc     Authenticate user & get token
@@ -38,126 +109,50 @@ router.post(
     const { email, password } = req.body;
 
     try {
-      // See if user exists
-      let user = users.find(user => user.email === email);
+      let user = await User.findOne({ where: { email } });
 
       if (!user) {
+        console.log('User not found'); // Debugging statement
         return res.status(400).json({ status: 'Error', message: 'Invalid Credentials' });
       }
 
-      // Match password
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, user.password_hash);
 
       if (!isMatch) {
+        console.log('Password does not match'); // Debugging statement
         return res.status(400).json({ status: 'Error', message: 'Invalid Credentials' });
       }
 
-      // Return jsonwebtoken
       const payload = {
         user: {
-          id: user.id
+          id: user.user_id
         }
       };
 
-      // Create auth token
-      const authToken = jwt.sign(
+      const token = jwt.sign(
         payload,
         process.env.JWT_SECRET,
-        { expiresIn: 3600 }
+        { expiresIn: '1h' }
       );
 
-      // Create refresh token
-      const refreshToken = jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+      const expires_at = new Date();
+      expires_at.setHours(expires_at.getHours() + 1);
 
-      // Set expiry time
-      const expiryTime = new Date();
-      expiryTime.setHours(expiryTime.getHours() + 1);
+      // Save the token information to the database
+      await AuthToken.create({
+        user_id: user.user_id,
+        auth_token: token,
+        expires_at
+      });
 
-      res.json({
-        status: 'OK',
-        authToken,
-        refreshToken,
-        expiryTime
+      console.log('User logged in successfully:', user); // Terminal comment
+      res.json({ 
+        status: 'OK', 
+        token 
       });
     } catch (err) {
       console.error('Server error:', err.message);
       res.status(500).json({ status: 'Error', message: 'Server error' });
-    }
-  }
-);
-
-// @route    POST api/auth/signup
-// @desc     Register user
-// @access   Public
-router.post(
-  '/signup',
-  [
-    check('firstName', 'First name is required').not().isEmpty(),
-    check('lastName', 'Last name is required').not().isEmpty(),
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password must be at least 8 characters long').isLength({ min: 8 }),
-    check('password', 'Password must contain at least 1 symbol, 1 uppercase & 1 lowercase letter')
-      .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ status: 'Error', message: errors.array() });
-    }
-
-    const { firstName, lastName, email, password } = req.body;
-
-    try {
-      // See if user exists
-      let user = users.find(user => user.email === email);
-
-      if (user) {
-        return res.status(400).json({ status: 'Error', message: 'User already exists' });
-      }
-
-      // Encrypt password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      // Create new user
-      user = {
-        id: users.length + 1,
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword
-      };
-
-      // Save user
-      users.push(user);
-
-      // Create JWT
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
-
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 3600 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ 
-            status: 'OK', 
-            message: 'User registered successfully',
-            token 
-          });
-        }
-      );
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).json({ status: 'Internal Server Error', message: 'Server error' });
     }
   }
 );
