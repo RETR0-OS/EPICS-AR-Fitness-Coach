@@ -56,8 +56,8 @@ const authService = {
     try {
       const response = await axiosInstance.post('/auth/login', { email, password });
       if (response.data.status === 'OK') {
-        localStorage.setItem('authToken', response.data.authToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
+        localStorage.setItem('authToken', response.data.token);
+        console.log('User logged in successfully'); // Terminal comment
         return { success: true };
       }
       return { success: false, message: 'Login failed' };
@@ -74,6 +74,7 @@ const authService = {
     try {
       const response = await axiosInstance.post('/auth/signup', userData);
       if (response.data.status === 'OK') {
+        console.log('User registered successfully'); // Terminal comment
         return { success: true, message: response.data.message };
       }
       return { success: false, message: 'Registration failed' };
@@ -89,6 +90,7 @@ const authService = {
   logout: () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
+    console.log('User logged out'); // Terminal comment
   },
 
   // Check if user is authenticated
@@ -112,32 +114,12 @@ const authService = {
     }
   },
 
-  // Refresh token
-  refreshToken: async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (refreshToken) {
-      try {
-        const response = await axiosInstance.post('/auth/refresh-token', { refreshToken });
-        if (response.data.status === 'OK') {
-          localStorage.setItem('authToken', response.data.authToken);
-          return { success: true };
-        }
-        return { success: false, message: 'Failed to refresh token' };
-      } catch (error) {
-        return { 
-          success: false, 
-          message: error.response?.data?.message || 'Server error' 
-        };
-      }
-    }
-    return { success: false, message: 'No refresh token available' };
-  },
-
   // Update user profile
   updateProfile: async (userData) => {
     try {
       const response = await axiosInstance.put('/profile', userData);
       if (response.data.status === 'OK') {
+        console.log('Profile updated successfully'); // Terminal comment
         return { success: true, message: response.data.message };
       }
       return { success: false, message: 'Failed to update profile' };
