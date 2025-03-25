@@ -1,27 +1,22 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const User = sequelize.define('User', {
-  user_id: {
+const AuthToken = sequelize.define('AuthToken', {
+  token_id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  firstName: {
-    type: DataTypes.STRING,
+  user_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  lastName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password_hash: {
+  auth_token: {
     type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  expires_at: {
+    type: DataTypes.DATE,
     allowNull: false,
   },
   created_at: {
@@ -29,8 +24,8 @@ const User = sequelize.define('User', {
     defaultValue: Sequelize.NOW,
   },
 }, {
-  tableName: 'users',
+  tableName: 'auth_tokens',
   timestamps: false,
 });
 
-module.exports = User;
+module.exports = AuthToken;
