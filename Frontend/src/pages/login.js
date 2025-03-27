@@ -13,8 +13,16 @@ const LogIn = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ email, password });
-  };
+  try {
 
+    if ( email && password) { 
+      localStorage.setItem('isAuthenticated', true);
+      router.push('/dashboard');
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
+};
   return (
     <div className="bg-white min-h-screen">
       <Navbar />
