@@ -69,7 +69,7 @@ const Navbar = () => {
             
             {/* Get started button at the bottom */}
             <div className="mt-auto pt-10">
-              <Link href="/apphome">
+              <Link href="/signup">
                 <button className="w-full px-5 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
                   Get Started
                 </button>
