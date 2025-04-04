@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, make_response
-import os
+from flask import Flask, request, jsonify, make_response
 import json
 import cv2
 
