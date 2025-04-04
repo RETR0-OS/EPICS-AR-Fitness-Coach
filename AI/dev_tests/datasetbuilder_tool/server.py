@@ -4,14 +4,6 @@ import cv2
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
-def home():
-    return "Welcome to the Dataset Builder Tool!"
-
-@app.route('/build/', methods=['GET'])
-def build():
-    return "build dataset page"
-
 @app.route('/save/', methods=['POST'])
 def save():
     data = request.get_json()
