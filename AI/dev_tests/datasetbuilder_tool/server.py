@@ -1,17 +1,10 @@
-from flask import Flask, request, jsonify, send_from_directory, make_response
-import os
+from flask import Flask, request, jsonify, make_response
+from flask_cors import CORS
 import json
 import cv2
 
 app = Flask(__name__)
-
-@app.route('/', methods=['GET'])
-def home():
-    return "Welcome to the Dataset Builder Tool!"
-
-@app.route('/build/', methods=['GET'])
-def build():
-    return "build dataset page"
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 @app.route('/save/', methods=['POST'])
 def save():
@@ -38,6 +31,7 @@ def load_next():
         bounding_box = dataset["annotations"][file_start_idx]["bbox"]
         print(bounding_box)
         image = dataset["images"][file_start_idx]["file_name"]
+        print(image)
         frame = cv2.imread(image)
         cv2.rectangle(frame, (bounding_box[0], bounding_box[1]), (bounding_box[0] + bounding_box[2], bounding_box[1] + bounding_box[3]), (0, 255, 0), 2)
         _, buffer = cv2.imencode('.jpg', frame)

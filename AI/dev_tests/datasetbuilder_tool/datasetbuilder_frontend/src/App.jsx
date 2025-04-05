@@ -5,9 +5,6 @@ import { Sidebar } from './components/Sidebar';
 import { KEYPOINT_NAMES } from './types';
 import DataForm from './components/DataForm';
 
-// Sample image URL from Unsplash (person doing yoga)
-const SAMPLE_IMAGE = 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=512&h=384';
-
 function App() {
   const [keypoints, setKeypoints] = useState(
     KEYPOINT_NAMES.map((_, index) => ({
@@ -154,7 +151,6 @@ function App() {
               <Canvas
                 keypoints={keypoints}
                 selectedKeypoint={selectedKeypoint}
-                imageUrl={SAMPLE_IMAGE}
                 onKeypointClick={handleKeypointClick}
               />
               <div className="mt-4 text-center text-gray-600">

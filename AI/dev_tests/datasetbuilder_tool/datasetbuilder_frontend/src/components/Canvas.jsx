@@ -1,8 +1,18 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-export function Canvas({ keypoints, selectedKeypoint, imageUrl, onKeypointClick }) {
+export function Canvas({ keypoints, selectedKeypoint, onKeypointClick }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:5000/load_next/')
+      .then(response => response.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        setImageUrl(url);
+      });
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;

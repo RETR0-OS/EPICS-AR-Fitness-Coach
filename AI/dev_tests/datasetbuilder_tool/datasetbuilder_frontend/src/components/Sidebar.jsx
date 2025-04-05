@@ -4,7 +4,7 @@ import { KEYPOINT_NAMES } from '../types';
 
 export function Sidebar({ keypoints, selectedKeypoint, onKeypointSelect, onStatusChange }) {
   return (
-    <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
+    <div className="w-80 bg-white border-l border-gray-200 h-full overflow-y-auto">
       <div className="p-4">
         <h2 className="text-lg font-semibold mb-4">Keypoints</h2>
         <div className="space-y-3">
@@ -46,3 +46,4 @@ export function Sidebar({ keypoints, selectedKeypoint, onKeypointSelect, onStatu
     </div>
   );
 }
+
