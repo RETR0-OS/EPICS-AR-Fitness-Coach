@@ -84,52 +84,51 @@ function App() {
 
   const handleNext = async () => {
     try {
-      console.log('Fetching next image from backend...');
-      
-      // Try to fetch from backend
-      let response = await fetch('http://localhost:5000/load_next/');
-      
-      // If backend request fails, use a placeholder image
-      if (!response.ok) {
-        console.warn(`Backend request failed: ${response.status} ${response.statusText}`);
-        console.log('Using placeholder image instead');
-        
-        // Placeholder image URL (you can replace with any placeholder image)
-        const placeholderUrl = 'https://placehold.co/512x384/gray/white?text=No+Image+Available';
-        
-        // Create a new response with the placeholder
-        response = await fetch(placeholderUrl);
-        
+        console.log('Fetching next image from backend...');
+
+        // Fetch the next image data from the backend
+        const response = await fetch('http://localhost:5000/load_next/');
+
         if (!response.ok) {
-          throw new Error(`Failed to load placeholder image: ${response.status} ${response.statusText}`);
+            console.warn(`Backend request failed: ${response.status} ${response.statusText}`);
+            throw new Error('Failed to fetch image from backend');
         }
-      }
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      console.log('Image loaded, setting URL:', url);
-      setImageUrl(url);
+        const data = await response.json(); // Parse the JSON response
+        const { imageId, imageData } = data;
 
-      // Reset keypoints for the new image
-      const resetKeypoints = KEYPOINT_NAMES.map((_, index) => ({
-        id: index,
-        name: KEYPOINT_NAMES[index],
-        x: 0,
-        y: 0,
-        status: 0,
-      }));
-      setKeypoints(resetKeypoints);
-      setSelectedKeypoint(0);
-      
-      // Reset history for the new image
-      setHistory([]);
-      setHistoryIndex(-1);
+        if (!imageId || !imageData) {
+            throw new Error('Invalid response from backend: Missing imageId or imageData');
+        }
+
+        // Create a blob URL for the image data
+        const blob = new Blob([Uint8Array.from(atob(imageData), c => c.charCodeAt(0))], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+
+        console.log('Image loaded, setting URL:', url);
+        setImageUrl(url);
+
+        // Reset keypoints for the new image
+        const resetKeypoints = KEYPOINT_NAMES.map((_, index) => ({
+            id: index,
+            name: KEYPOINT_NAMES[index],
+            x: 0,
+            y: 0,
+            status: 0,
+        }));
+        setKeypoints(resetKeypoints);
+        setSelectedKeypoint(0);
+
+        // Reset history for the new image
+        setHistory([]);
+        setHistoryIndex(-1);
     } catch (error) {
-      console.error('Error loading next image:', error);
-      // Set a text-based error image
-      setImageUrl('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384"><rect width="512" height="384" fill="%23f0f0f0"/><text x="50%" y="50%" font-family="Arial" font-size="20" text-anchor="middle" fill="%23888">Error loading image</text></svg>');
+        console.error('Error loading next image:', error);
+
+        // Set a text-based error image
+        setImageUrl('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384"><rect width="512" height="384" fill="%23f0f0f0"/><text x="50%" y="50%" font-family="Arial" font-size="20" text-anchor="middle" fill="%23888">Error loading image</text></svg>');
     }
-  };
+};
 
   useEffect(() => {
     // Load the initial image
