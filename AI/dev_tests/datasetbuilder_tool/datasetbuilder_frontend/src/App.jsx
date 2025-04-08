@@ -95,11 +95,14 @@ function App() {
         }
 
         const data = await response.json(); // Parse the JSON response
-        const { imageId, imageData } = data;
+        console.log(data);
+        const imageId = data.imageId;
+        const imageData = data.imageData;
+//         const { imageId, imageData } = data;
 
-        if (!imageId || !imageData) {
-            throw new Error('Invalid response from backend: Missing imageId or imageData');
-        }
+//         if (!imageId || !imageData) {
+//             throw new Error('Invalid response from backend: Missing imageId or imageData');
+//         }
 
         // Create a blob URL for the image data
         const blob = new Blob([Uint8Array.from(atob(imageData), c => c.charCodeAt(0))], { type: 'image/jpeg' });
