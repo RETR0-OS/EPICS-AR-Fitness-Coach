@@ -16,6 +16,7 @@ function App() {
     }))
   );
   const [selectedKeypoint, setSelectedKeypoint] = useState(0);
+  const [imageUrl, setImageUrl] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
@@ -25,58 +26,27 @@ function App() {
     setHistoryIndex(newHistory.length - 1);
   };
 
-  const handleKeypointClick = (x, y) => {
-    const newKeypoints = keypoints.map((kp) =>
-      kp.id === selectedKeypoint ? { ...kp, x, y, status: 2 } : kp
-    );
-    const nextUnmarked = newKeypoints.findIndex((kp) => kp.status === 0);
-    const newSelectedKeypoint = nextUnmarked !== -1 ? nextUnmarked : selectedKeypoint;
-
-    setKeypoints(newKeypoints);
-    setSelectedKeypoint(newSelectedKeypoint);
-    addToHistory(newKeypoints, newSelectedKeypoint);
-  };
-
-  const handleStatusChange = (id, status) => {
-    const newKeypoints = keypoints.map((kp) =>
-      kp.id === id ? { ...kp, status } : kp
-    );
-    setKeypoints(newKeypoints);
-    addToHistory(newKeypoints, selectedKeypoint);
-  };
-
+  // Add the missing undo function
   const handleUndo = () => {
     if (historyIndex > 0) {
-      const newIndex = historyIndex - 1;
-      setHistoryIndex(newIndex);
-      const previousState = history[newIndex];
-      setKeypoints(previousState.keypoints);
-      setSelectedKeypoint(previousState.selectedKeypoint);
-    } else if (historyIndex === 0) {
-      setHistoryIndex(-1);
-      const initialKeypoints = KEYPOINT_NAMES.map((_, index) => ({
-        id: index,
-        name: KEYPOINT_NAMES[index],
-        x: 0,
-        y: 0,
-        status: 0,
-      }));
-      setKeypoints(initialKeypoints);
-      setSelectedKeypoint(0);
+      const prevState = history[historyIndex - 1];
+      setKeypoints(prevState.keypoints);
+      setSelectedKeypoint(prevState.selectedKeypoint);
+      setHistoryIndex(historyIndex - 1);
     }
   };
 
+  // Add the missing redo function
   const handleRedo = () => {
     if (historyIndex < history.length - 1) {
-      const newIndex = historyIndex + 1;
-      const nextState = history[newIndex];
-      setHistoryIndex(newIndex);
+      const nextState = history[historyIndex + 1];
       setKeypoints(nextState.keypoints);
       setSelectedKeypoint(nextState.selectedKeypoint);
+      setHistoryIndex(historyIndex + 1);
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const data = {
       imageId: '1', // Replace with actual image ID
       imageDimensions: {
@@ -89,26 +59,83 @@ function App() {
         status: kp.status === 2 ? 'visible' : kp.status === 1 ? 'occluded' : 'unmarked',
       })),
     };
-    console.log('Saving annotation data:', data);
-    // Add actual save logic here
+
+    try {
+      console.log('Sending data to backend:', data);
+      const response = await fetch('http://localhost:5000/save/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save data: ${response.status} ${response.statusText}`);
+      }
+
+      console.log('Data sent to backend successfully');
+      alert('Data saved successfully!');
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert(`Failed to save data: ${error.message}`);
+    }
+  };
+
+  const handleNext = async () => {
+    try {
+      console.log('Fetching next image from backend...');
+      
+      // Try to fetch from backend
+      let response = await fetch('http://localhost:5000/load_next/');
+      
+      // If backend request fails, use a placeholder image
+      if (!response.ok) {
+        console.warn(`Backend request failed: ${response.status} ${response.statusText}`);
+        console.log('Using placeholder image instead');
+        
+        // Placeholder image URL (you can replace with any placeholder image)
+        const placeholderUrl = 'https://placehold.co/512x384/gray/white?text=No+Image+Available';
+        
+        // Create a new response with the placeholder
+        response = await fetch(placeholderUrl);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load placeholder image: ${response.status} ${response.statusText}`);
+        }
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      console.log('Image loaded, setting URL:', url);
+      setImageUrl(url);
+
+      // Reset keypoints for the new image
+      const resetKeypoints = KEYPOINT_NAMES.map((_, index) => ({
+        id: index,
+        name: KEYPOINT_NAMES[index],
+        x: 0,
+        y: 0,
+        status: 0,
+      }));
+      setKeypoints(resetKeypoints);
+      setSelectedKeypoint(0);
+      
+      // Reset history for the new image
+      setHistory([]);
+      setHistoryIndex(-1);
+    } catch (error) {
+      console.error('Error loading next image:', error);
+      // Set a text-based error image
+      setImageUrl('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384"><rect width="512" height="384" fill="%23f0f0f0"/><text x="50%" y="50%" font-family="Arial" font-size="20" text-anchor="middle" fill="%23888">Error loading image</text></svg>');
+    }
   };
 
   useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
-        if (e.shiftKey) {
-          handleRedo();
-        } else {
-          handleUndo();
-        }
-      } else if (e.key >= '0' && e.key <= '2') {
-        handleStatusChange(selectedKeypoint, Number(e.key));
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedKeypoint, historyIndex, history]);
+    // Load the initial image
+    console.log('Initial load triggered');
+    handleNext();
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -140,6 +167,12 @@ function App() {
                 <Save className="w-4 h-4" />
                 <span>Save</span>
               </button>
+              <button
+                onClick={handleNext}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center space-x-2"
+              >
+                <span>Next</span>
+              </button>
               <DataForm keypoints={keypoints} />
             </div>
           </div>
@@ -151,7 +184,18 @@ function App() {
               <Canvas
                 keypoints={keypoints}
                 selectedKeypoint={selectedKeypoint}
-                onKeypointClick={handleKeypointClick}
+                imageUrl={imageUrl}
+                onKeypointClick={(x, y) => {
+                  const newKeypoints = keypoints.map((kp) =>
+                    kp.id === selectedKeypoint ? { ...kp, x, y, status: 2 } : kp
+                  );
+                  const nextUnmarked = newKeypoints.findIndex((kp) => kp.status === 0);
+                  const newSelectedKeypoint = nextUnmarked !== -1 ? nextUnmarked : selectedKeypoint;
+
+                  setKeypoints(newKeypoints);
+                  setSelectedKeypoint(newSelectedKeypoint);
+                  addToHistory(newKeypoints, newSelectedKeypoint);
+                }}
               />
               <div className="mt-4 text-center text-gray-600">
                 Image 1 of 1 • Click to place keypoints • Use number keys (0-2) to change status
@@ -162,7 +206,13 @@ function App() {
             keypoints={keypoints}
             selectedKeypoint={selectedKeypoint}
             onKeypointSelect={setSelectedKeypoint}
-            onStatusChange={handleStatusChange}
+            onStatusChange={(id, status) => {
+              const newKeypoints = keypoints.map((kp) =>
+                kp.id === id ? { ...kp, status } : kp
+              );
+              setKeypoints(newKeypoints);
+              addToHistory(newKeypoints, selectedKeypoint);
+            }}
           />
         </div>
       </main>
