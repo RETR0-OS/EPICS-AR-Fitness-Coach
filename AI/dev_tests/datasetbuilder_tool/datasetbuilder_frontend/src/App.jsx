@@ -84,54 +84,56 @@ function App() {
 
   const handleNext = async () => {
     try {
-        console.log('Fetching next image from backend...');
+      console.log('Fetching next image from backend...');
 
-        // Fetch the next image data from the backend
-        const response = await fetch('http://localhost:5000/load_next/');
+      // Fetch the next image data from the backend
+      const response = await fetch('http://localhost:5000/load_next/');
 
-        if (!response.ok) {
-            console.warn(`Backend request failed: ${response.status} ${response.statusText}`);
-            throw new Error('Failed to fetch image from backend');
-        }
+      if (!response.ok) {
+        console.warn(`Backend request failed: ${response.status} ${response.statusText}`);
+        throw new Error('Failed to fetch image from backend');
+      }
 
-        const data = await response.json(); // Parse the JSON response
-        console.log(data);
-        const imageId = data.imageId;
-        const imageData = data.imageData;
-//         const { imageId, imageData } = data;
+      const data = await response.json(); // Parse the JSON response
+      const { imageId, imageData } = data;
 
-//         if (!imageId || !imageData) {
-//             throw new Error('Invalid response from backend: Missing imageId or imageData');
-//         }
+      if (imageId == null || !imageData) {
+        throw new Error('Invalid response from backend: Missing imageId or imageData');
+      }
 
-        // Create a blob URL for the image data
-        const blob = new Blob([Uint8Array.from(atob(imageData), c => c.charCodeAt(0))], { type: 'image/jpeg' });
-        const url = URL.createObjectURL(blob);
+      // Decode base64 data into a Blob
+      const byteCharacters = atob(imageData);
+      const byteNumbers = new Array(byteCharacters.length).fill().map((_, i) => byteCharacters.charCodeAt(i));
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
 
-        console.log('Image loaded, setting URL:', url);
-        setImageUrl(url);
+      // Create a URL for the Blob
+      const url = URL.createObjectURL(blob);
 
-        // Reset keypoints for the new image
-        const resetKeypoints = KEYPOINT_NAMES.map((_, index) => ({
-            id: index,
-            name: KEYPOINT_NAMES[index],
-            x: 0,
-            y: 0,
-            status: 0,
-        }));
-        setKeypoints(resetKeypoints);
-        setSelectedKeypoint(0);
+      console.log('Image loaded, setting URL:', url);
+      setImageUrl(url);
 
-        // Reset history for the new image
-        setHistory([]);
-        setHistoryIndex(-1);
+      // Reset keypoints for the new image
+      const resetKeypoints = KEYPOINT_NAMES.map((_, index) => ({
+        id: index,
+        name: KEYPOINT_NAMES[index],
+        x: 0,
+        y: 0,
+        status: 0,
+      }));
+      setKeypoints(resetKeypoints);
+      setSelectedKeypoint(0);
+
+      // Reset history for the new image
+      setHistory([]);
+      setHistoryIndex(-1);
     } catch (error) {
-        console.error('Error loading next image:', error);
+      console.error('Error loading next image:', error);
 
-        // Set a text-based error image
-        setImageUrl('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384"><rect width="512" height="384" fill="%23f0f0f0"/><text x="50%" y="50%" font-family="Arial" font-size="20" text-anchor="middle" fill="%23888">Error loading image</text></svg>');
+      // Set a text-based error image
+      setImageUrl('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384"><rect width="512" height="384" fill="%23f0f0f0"/><text x="50%" y="50%" font-family="Arial" font-size="20" text-anchor="middle" fill="%23888">Error loading image</text></svg>');
     }
-};
+  };
 
   useEffect(() => {
     // Load the initial image
