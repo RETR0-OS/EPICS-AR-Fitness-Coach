@@ -36,7 +36,14 @@ const LogIn = () => {
       setLoading(false);
     }
   };
-
+    if ( email && password) { 
+      localStorage.setItem('isAuthenticated', true);
+      router.push('/dashboard');
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
+};
   return (
     <div className="bg-white min-h-screen">
       <Navbar />

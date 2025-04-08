@@ -34,6 +34,14 @@ const ProfilePage = () => {
     });
   };
 
+  // Function to ensure no negative values
+  const handlePositiveInput = (setter) => (e) => {
+    const value = e.target.value;
+    if (value >= 0 || value === "") {
+      setter(value);
+    }
+  };
+
   return (
     <div className="bg-white">
       <Navbar />
@@ -55,7 +63,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={age}
-                onChange={(e) => setAge(e.target.value)}
+                onChange={handlePositiveInput(setAge)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
                 required
               />
@@ -83,7 +91,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={frequency}
-                onChange={(e) => setFrequency(e.target.value)}
+                onChange={handlePositiveInput(setFrequency)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
                 required
               />
@@ -131,7 +139,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={weight}
-                onChange={(e) => setWeight(Math.max(0, e.target.value))}
+                onChange={handlePositiveInput(setWeight)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
                 required
               />
@@ -142,7 +150,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={height}
-                onChange={(e) => setHeight(Math.max(0, e.target.value))}
+                onChange={handlePositiveInput(setHeight)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
                 required
               />
