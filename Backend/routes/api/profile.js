@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('./auth');
+const {auth} = require('../api/auth');
 const User = require('../../models/User'); // Import the User model
 
 // @route    GET api/profile
@@ -8,7 +8,12 @@ const User = require('../../models/User'); // Import the User model
 // @access   Private
 router.get('/', auth, async (req, res) => {
   try {
+    console.log(req.params)
+    console.log(req.body)
+    console.log(req.query)
+    console.log("end")
     const user = await User.findByPk(req.user.id);
+    
 
     if (!user) {
       return res.status(404).json({ status: 'Error', message: 'User not found' });
@@ -19,7 +24,7 @@ router.get('/', auth, async (req, res) => {
       user
     });
   } catch (error) {
-    console.error('Server error:', error.message);
+    console.error('Server error1:', error.message);
     res.status(500).json({ status: 'Error', message: 'Server error' });
   }
 });
@@ -40,6 +45,7 @@ router.put('/', auth, async (req, res) => {
 
   try {
     const user = await User.findByPk(req.user.id);
+    console.log(req.user + "second")
 
     if (!user) {
       return res.status(404).json({ status: 'Error', message: 'User not found' });
@@ -71,7 +77,7 @@ router.put('/', auth, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Server error:', error.message);
+    console.error('Server error2:', error.message);
     res.status(500).json({ status: 'Error', message: 'Server error' });
   }
 });
@@ -130,7 +136,7 @@ router.post('/signup', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Server error:', error.message);
+    console.error('Server error3:', error.message);
     res.status(500).json({ status: 'Error', message: 'Server error' });
   }
 });

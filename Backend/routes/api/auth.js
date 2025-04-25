@@ -7,6 +7,29 @@ const User = require('../../models/User');
 const AuthToken = require('../../models/AuthToken');
 require('dotenv').config();
 
+// Authentication middleware
+const auth = function(req, res, next) {
+  // Get token from header
+  const token = req.header('x-auth-token');
+
+  // Check if no token
+  if (!token) {
+    return res.status(401).json({ status: 'Error', message: 'No token, authorization denied' });
+  }
+
+  // Verify token
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Add user from payload
+    req.user = decoded.user;
+    next();
+  } catch (err) {
+    res.status(401).json({ status: 'Error', message: 'Token is not valid' });
+  }
+};
+
+
 // @route    POST api/auth/signup
 // @desc     Register user
 // @access   Public
@@ -157,4 +180,4 @@ router.post(
   }
 );
 
-module.exports = router;
+module.exports = {router,auth};
